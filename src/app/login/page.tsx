@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
@@ -21,21 +21,29 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      let userRole = "user";
+
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // Fetch role from Firestore
+        const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+        if (userDoc.exists()) {
+          userRole = userDoc.data().role || "user";
+        }
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        userRole = email.toLowerCase() === "admin@stepup.com" ? "admin" : "user";
         
         // Save the new user to Firestore
         await setDoc(doc(db, "users", userCredential.user.uid), {
           email: userCredential.user.email,
-          role: email.toLowerCase() === "admin@stepup.com" ? "admin" : "user",
+          role: userRole,
           createdAt: serverTimestamp()
         });
       }
       
-      // Determine redirection based on email
-      if (email.toLowerCase() === "admin@stepup.com") {
+      // Determine redirection based on Firestore role
+      if (userRole === "admin") {
         router.push("/admin");
       } else {
         router.push("/");

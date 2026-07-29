@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X, User } from "lucide-react";
 import Link from "next/link";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
@@ -19,8 +21,22 @@ const Navbar = () => {
     };
     window.addEventListener("scroll", handleScroll);
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role === "admin") {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        } catch (e) {
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
     });
 
     return () => {
@@ -73,14 +89,14 @@ const Navbar = () => {
                   className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
                 >
                   <User className="w-4 h-4" />
-                  {currentUser.email?.toLowerCase() === "admin@stepup.com" ? "Admin" : "Account"}
+                  {isAdmin ? "Admin" : "Account"}
                 </button>
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-academy-gray border border-gray-800 rounded-xl shadow-2xl py-2 flex flex-col z-50 overflow-hidden">
                     <span className="px-4 py-3 text-xs text-gray-400 border-b border-gray-800 truncate">
                       {currentUser.email}
                     </span>
-                    {currentUser.email?.toLowerCase() === "admin@stepup.com" && (
+                    {isAdmin && (
                       <Link href="/admin" className="px-4 py-3 text-sm text-gray-300 hover:bg-academy-gold/10 hover:text-academy-gold transition-colors border-b border-gray-800">
                         Admin Dashboard
                       </Link>
@@ -143,7 +159,7 @@ const Navbar = () => {
                     <span className="text-white font-medium">{currentUser.email}</span>
                   </div>
                   
-                  {currentUser.email?.toLowerCase() === "admin@stepup.com" && (
+                  {isAdmin && (
                     <Link
                       href="/admin"
                       onClick={() => setIsOpen(false)}
