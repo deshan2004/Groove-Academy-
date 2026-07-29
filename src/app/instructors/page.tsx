@@ -116,10 +116,10 @@ export default function InstructorsPage() {
                 </p>
                 <div className="flex items-center gap-4 text-gray-500">
                   <button className="hover:text-academy-gold transition-colors">
-                    <Instagram className="w-5 h-5" />
+                    <Mail className="w-5 h-5" />
                   </button>
                   <button className="hover:text-academy-gold transition-colors">
-                    <Twitter className="w-5 h-5" />
+                    <Video className="w-5 h-5" />
                   </button>
                   <button className="hover:text-academy-gold transition-colors">
                     <Music className="w-5 h-5" />
