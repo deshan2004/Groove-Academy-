@@ -31,8 +31,10 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/" },
-    { name: "Classes", href: "/classes" },
-    { name: "Enroll", href: "/enroll" },
+    ...(currentUser ? [
+      { name: "Classes", href: "/classes" },
+      { name: "Enroll", href: "/enroll" },
+    ] : []),
   ];
 
   return (
