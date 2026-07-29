@@ -47,6 +47,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/enroll/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEnrollments(enrollments.map(e => e._id === id ? { ...e, status: newStatus } : e));
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-academy-black flex items-center justify-center">
@@ -100,6 +116,7 @@ export default function AdminDashboard() {
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Age</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Style</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Status</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
@@ -137,9 +154,31 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-900/30 text-green-400 border border-green-500/30">
-                          {student.status || "Pending"}
+                        <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                          student.status === "approved" ? "bg-green-900/30 text-green-400 border-green-500/30" :
+                          student.status === "rejected" ? "bg-red-900/30 text-red-400 border-red-500/30" :
+                          "bg-yellow-900/30 text-yellow-400 border-yellow-500/30"
+                        }`}>
+                          {(student.status || "pending").toUpperCase()}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {(!student.status || student.status === "pending") && (
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleUpdateStatus(student._id, "approved")}
+                              className="text-xs bg-green-900/30 hover:bg-green-900/60 text-green-400 border border-green-500/30 px-3 py-1 rounded-md transition-colors"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleUpdateStatus(student._id, "rejected")}
+                              className="text-xs bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-500/30 px-3 py-1 rounded-md transition-colors"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))

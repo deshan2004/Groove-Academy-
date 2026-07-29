@@ -50,6 +50,8 @@ const Navbar = () => {
     ...(currentUser ? [
       { name: "Classes", href: "/classes" },
       { name: "Enroll", href: "/enroll" },
+      { name: "Gallery", href: "/gallery" },
+      { name: "Instructors", href: "/instructors" },
     ] : []),
   ];
 
@@ -85,22 +87,21 @@ const Navbar = () => {
                 onMouseEnter={() => setShowDropdown(true)} 
                 onMouseLeave={() => setShowDropdown(false)}
               >
-                <button
+                <Link
+                  href={isAdmin ? "/admin" : "/dashboard"}
                   className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
                 >
                   <User className="w-4 h-4" />
                   {isAdmin ? "Admin" : "Account"}
-                </button>
+                </Link>
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-academy-gray border border-gray-800 rounded-xl shadow-2xl py-2 flex flex-col z-50 overflow-hidden">
                     <span className="px-4 py-3 text-xs text-gray-400 border-b border-gray-800 truncate">
                       {currentUser.email}
                     </span>
-                    {isAdmin && (
-                      <Link href="/admin" className="px-4 py-3 text-sm text-gray-300 hover:bg-academy-gold/10 hover:text-academy-gold transition-colors border-b border-gray-800">
-                        Admin Dashboard
-                      </Link>
-                    )}
+                    <Link href={isAdmin ? "/admin" : "/dashboard"} className="px-4 py-3 text-sm text-gray-300 hover:bg-academy-gold/10 hover:text-academy-gold transition-colors border-b border-gray-800">
+                      {isAdmin ? "Admin Dashboard" : "My Dashboard"}
+                    </Link>
                     <button
                       onClick={() => auth.signOut()}
                       className="px-4 py-3 text-sm text-red-400 hover:bg-red-900/30 text-left transition-colors"
@@ -159,16 +160,14 @@ const Navbar = () => {
                     <span className="text-white font-medium">{currentUser.email}</span>
                   </div>
                   
-                  {isAdmin && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setIsOpen(false)}
-                      className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
-                    >
-                      <User className="w-5 h-5" />
-                      Admin Dashboard
-                    </Link>
-                  )}
+                  <Link
+                    href={isAdmin ? "/admin" : "/dashboard"}
+                    onClick={() => setIsOpen(false)}
+                    className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
+                  >
+                    <User className="w-5 h-5" />
+                    {isAdmin ? "Admin Dashboard" : "My Dashboard"}
+                  </Link>
                   
                   <button
                     onClick={() => {

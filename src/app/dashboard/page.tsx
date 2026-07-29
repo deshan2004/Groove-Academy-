@@ -1,0 +1,158 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Calendar, User, Mail, MapPin, Clock } from "lucide-react";
+import Link from "next/link";
+
+export default function StudentDashboard() {
+  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        router.push("/login");
+      } else {
+        setCurrentUser(user);
+        try {
+          // Check if admin, redirect them out of here
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
+            router.push("/admin");
+            return;
+          }
+          fetchMyEnrollments(user.email);
+        } catch (error) {
+          console.error(error);
+          fetchMyEnrollments(user.email);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  const fetchMyEnrollments = async (email: string | null) => {
+    if (!email) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/enroll/user?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.success) {
+        setEnrollments(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching my enrollments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "approved":
+        return "bg-green-900/30 text-green-400 border-green-500/30";
+      case "rejected":
+        return "bg-red-900/30 text-red-400 border-red-500/30";
+      default:
+        return "bg-yellow-900/30 text-yellow-400 border-yellow-500/30";
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-academy-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-academy-gold"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-academy-black pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">My Dashboard</h1>
+            <p className="text-gray-400">Welcome back! Here are your class enrollments.</p>
+          </div>
+          <div className="bg-academy-gray border border-gray-800 px-6 py-4 rounded-xl flex items-center gap-4 shadow-lg w-full md:w-auto">
+            <div className="h-12 w-12 rounded-full bg-academy-gold/20 flex items-center justify-center text-academy-gold font-bold text-xl">
+              {currentUser?.email?.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Logged in as</p>
+              <p className="font-medium text-white truncate max-w-[200px]">{currentUser?.email}</p>
+            </div>
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6">My Classes</h2>
+          
+          {enrollments.length === 0 ? (
+            <div className="bg-academy-gray border border-gray-800 rounded-3xl p-12 text-center shadow-2xl">
+              <div className="w-20 h-20 bg-academy-black rounded-full flex items-center justify-center mx-auto mb-6">
+                <Calendar className="w-10 h-10 text-gray-600" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">No enrollments found</h3>
+              <p className="text-gray-400 mb-8 max-w-md mx-auto">
+                You haven't requested to join any classes yet. Browse our schedule and start your journey!
+              </p>
+              <Link
+                href="/classes"
+                className="inline-block bg-academy-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-[0_0_15px_rgba(198,40,40,0.4)]"
+              >
+                Browse Classes
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {enrollments.map((enrollment, index) => (
+                <motion.div
+                  key={enrollment._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-academy-gray border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-4">
+                    <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${getStatusColor(enrollment.status || 'pending')}`}>
+                      {(enrollment.status || 'pending').toUpperCase()}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-6 pr-24">
+                    <h3 className="text-xl font-bold text-academy-gold mb-1">{enrollment.preferred_style}</h3>
+                    <p className="text-gray-400 text-sm">Class Enrollment</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-300">
+                      <User className="w-4 h-4 mr-3 text-gray-500" />
+                      {enrollment.student_name} ({enrollment.age} yrs)
+                    </div>
+                    <div className="flex items-center text-sm text-gray-300">
+                      <Mail className="w-4 h-4 mr-3 text-gray-500" />
+                      {enrollment.email}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
