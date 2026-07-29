@@ -2,19 +2,30 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import Link from "next/link";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      unsubscribe();
+    };
   }, []);
 
   const navLinks = [
@@ -48,12 +59,23 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/enroll"
-              className="bg-academy-red hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-[0_0_15px_rgba(198,40,40,0.5)] hover:shadow-[0_0_25px_rgba(198,40,40,0.8)]"
-            >
-              Join Now
-            </Link>
+            
+            {currentUser ? (
+              <Link
+                href={currentUser.email?.toLowerCase() === "admin@stepup.com" ? "/admin" : "/profile"}
+                className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
+              >
+                <User className="w-4 h-4" />
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-academy-red hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-[0_0_15px_rgba(198,40,40,0.5)] hover:shadow-[0_0_25px_rgba(198,40,40,0.8)]"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -88,13 +110,24 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="pt-4 pb-2 px-3">
-              <Link
-                href="/enroll"
-                onClick={() => setIsOpen(false)}
-                className="w-full flex justify-center bg-academy-red hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-all"
-              >
-                Join Now
-              </Link>
+              {currentUser ? (
+                <Link
+                  href={currentUser.email?.toLowerCase() === "admin@stepup.com" ? "/admin" : "/profile"}
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
+                >
+                  <User className="w-5 h-5" />
+                  Dashboard
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex justify-center bg-academy-red hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-all"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </motion.div>
