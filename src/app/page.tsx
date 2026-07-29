@@ -20,7 +20,7 @@ export default function Home() {
       if (currentUser) {
         try {
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          if (userDoc.exists() && userDoc.data().role === "admin") {
+          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
             router.push("/admin");
             return;
           }

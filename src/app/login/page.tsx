@@ -28,7 +28,7 @@ export default function LoginPage() {
         // Fetch role from Firestore
         const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
         if (userDoc.exists()) {
-          userRole = userDoc.data().role || "user";
+          userRole = userDoc.data().role?.toLowerCase() || "user";
         }
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);

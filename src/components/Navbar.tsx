@@ -26,7 +26,7 @@ const Navbar = () => {
       if (user) {
         try {
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().role === "admin") {
+          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
             setIsAdmin(true);
           } else {
             setIsAdmin(false);
