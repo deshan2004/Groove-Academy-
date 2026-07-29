@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Clock, Calendar, MapPin, User } from "lucide-react";
-import { IClass } from "@/models/Class";
+export interface IClass {
+  _id?: string;
+  title: string;
+  style: string;
+  day: string;
+  time: string;
+  instructor_name: string;
+  hall_no: string;
+}
 
 const fallbackClasses: IClass[] = [
   { _id: "1", title: "Beginner Hip-Hop", style: "Hip-Hop", day: "Monday", time: "18:00 - 19:30", instructor_name: "Alex Vance", hall_no: "Hall A" },

@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Enrollment from "@/models/Enrollment";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export async function POST(request: Request) {
   try {
-    await dbConnect();
     const body = await request.json();
 
     // Basic validation
@@ -21,10 +20,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const newEnrollment = await Enrollment.create(body);
+    const docRef = await addDoc(collection(db, "enrollments"), {
+      ...body,
+      status: "pending",
+      createdAt: serverTimestamp(),
+    });
 
     return NextResponse.json(
-      { success: true, data: newEnrollment },
+      { success: true, data: { _id: docRef.id, ...body, status: "pending" } },
       { status: 201 }
     );
   } catch (error) {
