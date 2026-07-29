@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Users, Mail, Phone, Calendar } from "lucide-react";
@@ -13,11 +14,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Check if user is logged in and is admin
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user || user.email?.toLowerCase() !== "admin@stepup.com") {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) {
         router.push("/login");
       } else {
-        fetchEnrollments();
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
+            fetchEnrollments();
+          } else {
+            router.push("/");
+          }
+        } catch (error) {
+          router.push("/");
+        }
       }
     });
     return () => unsubscribe();
