@@ -58,13 +58,13 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-academy-black pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
             <p className="text-gray-400">Manage student enrollments and applications.</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="bg-academy-gray border border-gray-800 px-6 py-3 rounded-xl flex items-center gap-4 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full md:w-auto">
+            <div className="bg-academy-gray border border-gray-800 px-6 py-3 rounded-xl flex items-center gap-4 shadow-lg w-full sm:w-auto">
               <div className="p-3 bg-academy-gold/10 rounded-lg">
                 <Users className="text-academy-gold w-6 h-6" />
               </div>
@@ -79,7 +79,7 @@ export default function AdminDashboard() {
                 auth.signOut();
                 router.push("/login");
               }}
-              className="bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 px-6 py-3 rounded-xl font-medium transition-all h-full"
+              className="bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 px-6 py-3 rounded-xl font-medium transition-all w-full sm:w-auto h-full"
             >
               Sign Out
             </button>

@@ -84,22 +84,22 @@ const ClassSchedule = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-academy-gold transition-colors">{cls.title}</h3>
                 
-                <div className="grid grid-cols-2 gap-4 text-gray-400">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-5 h-5 text-academy-gold" />
-                    <span>{cls.day}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-400">
+                  <div className="flex items-center space-x-2 text-sm sm:text-base">
+                    <Calendar className="w-5 h-5 text-academy-gold shrink-0" />
+                    <span className="truncate">{cls.day}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Clock className="w-5 h-5 text-academy-gold" />
-                    <span>{cls.time}</span>
+                  <div className="flex items-center space-x-2 text-sm sm:text-base">
+                    <Clock className="w-5 h-5 text-academy-gold shrink-0" />
+                    <span className="truncate">{cls.time}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <User className="w-5 h-5 text-academy-gold" />
-                    <span>{cls.instructor_name}</span>
+                  <div className="flex items-center space-x-2 text-sm sm:text-base">
+                    <User className="w-5 h-5 text-academy-gold shrink-0" />
+                    <span className="truncate">{cls.instructor_name}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-5 h-5 text-academy-gold" />
-                    <span>{cls.hall_no}</span>
+                  <div className="flex items-center space-x-2 text-sm sm:text-base">
+                    <MapPin className="w-5 h-5 text-academy-gold shrink-0" />
+                    <span className="truncate">{cls.hall_no}</span>
                   </div>
                 </div>
               </motion.div>
