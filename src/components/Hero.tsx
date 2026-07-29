@@ -42,19 +42,19 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           className="flex flex-col sm:flex-row justify-center gap-4"
         >
-          <a
-            href="#classes"
+          <Link
+            href="/classes"
             className="group relative inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-transparent border-2 border-academy-gold rounded-full hover:bg-academy-gold hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-academy-gold"
           >
             Explore Classes
-          </a>
-          <a
-            href="#enroll"
+          </Link>
+          <Link
+            href="/enroll"
             className="group inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white transition-all duration-200 bg-academy-red rounded-full hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600 shadow-[0_0_20px_rgba(198,40,40,0.4)]"
           >
             Start Dancing
             <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </a>
+          </Link>
         </motion.div>
       </div>
 

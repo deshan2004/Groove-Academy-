@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand Col */}
           <div className="space-y-6">
-            <Link href="#home" className="inline-block">
+            <Link href="/" className="inline-block">
               <span className="text-3xl font-bold tracking-tighter text-academy-white">
                 Step<span className="text-academy-gold">Up</span>
               </span>
@@ -31,13 +31,13 @@ const Footer = () => {
             <h4 className="text-white font-bold text-lg mb-6">Quick Links</h4>
             <ul className="space-y-4">
               <li>
-                <Link href="#home" className="text-gray-400 hover:text-academy-gold transition-colors">Home</Link>
+                <Link href="/" className="text-gray-400 hover:text-academy-gold transition-colors">Home</Link>
               </li>
               <li>
-                <Link href="#classes" className="text-gray-400 hover:text-academy-gold transition-colors">Classes</Link>
+                <Link href="/classes" className="text-gray-400 hover:text-academy-gold transition-colors">Classes</Link>
               </li>
               <li>
-                <Link href="#enroll" className="text-gray-400 hover:text-academy-gold transition-colors">Enroll</Link>
+                <Link href="/enroll" className="text-gray-400 hover:text-academy-gold transition-colors">Enroll</Link>
               </li>
             </ul>
           </div>

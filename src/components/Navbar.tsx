@@ -18,9 +18,9 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "Classes", href: "#classes" },
-    { name: "Enroll", href: "#enroll" },
+    { name: "Home", href: "/" },
+    { name: "Classes", href: "/classes" },
+    { name: "Enroll", href: "/enroll" },
   ];
 
   return (
@@ -31,29 +31,29 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <a href="#home" className="flex items-center">
+          <Link href="/" className="flex items-center">
             <span className="text-2xl font-bold tracking-tighter text-academy-white">
               Step<span className="text-academy-gold">Up</span>
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 className="text-gray-300 hover:text-academy-gold transition-colors font-medium text-sm tracking-wide uppercase"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <a
-              href="#enroll"
+            <Link
+              href="/enroll"
               className="bg-academy-red hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-[0_0_15px_rgba(198,40,40,0.5)] hover:shadow-[0_0_25px_rgba(198,40,40,0.8)]"
             >
               Join Now
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -78,23 +78,23 @@ const Navbar = () => {
         >
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className="text-gray-300 hover:text-academy-gold block px-3 py-4 text-base font-medium border-b border-gray-800"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <div className="pt-4 pb-2 px-3">
-              <a
-                href="#enroll"
+              <Link
+                href="/enroll"
                 onClick={() => setIsOpen(false)}
                 className="w-full flex justify-center bg-academy-red hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-all"
               >
                 Join Now
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>
