@@ -11,6 +11,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,13 +62,36 @@ const Navbar = () => {
             ))}
             
             {currentUser ? (
-              <Link
-                href={currentUser.email?.toLowerCase() === "admin@stepup.com" ? "/admin" : "/profile"}
-                className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
+              <div 
+                className="relative" 
+                onMouseEnter={() => setShowDropdown(true)} 
+                onMouseLeave={() => setShowDropdown(false)}
               >
-                <User className="w-4 h-4" />
-                Dashboard
-              </Link>
+                <button
+                  className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  {currentUser.email?.toLowerCase() === "admin@stepup.com" ? "Admin" : "Account"}
+                </button>
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-academy-gray border border-gray-800 rounded-xl shadow-2xl py-2 flex flex-col z-50 overflow-hidden">
+                    <span className="px-4 py-3 text-xs text-gray-400 border-b border-gray-800 truncate">
+                      {currentUser.email}
+                    </span>
+                    {currentUser.email?.toLowerCase() === "admin@stepup.com" && (
+                      <Link href="/admin" className="px-4 py-3 text-sm text-gray-300 hover:bg-academy-gold/10 hover:text-academy-gold transition-colors border-b border-gray-800">
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <button
+                      onClick={() => auth.signOut()}
+                      className="px-4 py-3 text-sm text-red-400 hover:bg-red-900/30 text-left transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -109,16 +133,35 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <div className="pt-4 pb-2 px-3">
+            <div className="pt-4 pb-2 px-3 border-t border-gray-800 mt-2">
               {currentUser ? (
-                <Link
-                  href={currentUser.email?.toLowerCase() === "admin@stepup.com" ? "/admin" : "/profile"}
-                  onClick={() => setIsOpen(false)}
-                  className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
-                >
-                  <User className="w-5 h-5" />
-                  Dashboard
-                </Link>
+                <div className="space-y-3">
+                  <div className="px-3 py-2 text-sm text-gray-400">
+                    Logged in as: <br/>
+                    <span className="text-white font-medium">{currentUser.email}</span>
+                  </div>
+                  
+                  {currentUser.email?.toLowerCase() === "admin@stepup.com" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsOpen(false)}
+                      className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
+                    >
+                      <User className="w-5 h-5" />
+                      Admin Dashboard
+                    </Link>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      auth.signOut();
+                      setIsOpen(false);
+                    }}
+                    className="w-full flex justify-center text-red-400 hover:text-red-300 hover:bg-red-900/20 px-6 py-3 rounded-full font-medium transition-all"
+                  >
+                    Sign Out
+                  </button>
+                </div>
               ) : (
                 <Link
                   href="/login"

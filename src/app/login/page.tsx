@@ -30,7 +30,7 @@ export default function LoginPage() {
       if (email.toLowerCase() === "admin@stepup.com") {
         router.push("/admin");
       } else {
-        router.push("/profile");
+        router.push("/");
       }
     } catch (err: any) {
       console.error(err);
