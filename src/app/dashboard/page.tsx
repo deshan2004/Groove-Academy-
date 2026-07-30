@@ -18,6 +18,7 @@ export default function StudentDashboard() {
   // Profile form state
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [countryCode, setCountryCode] = useState("+94");
   const [phone, setPhone] = useState("");
   const [updating, setUpdating] = useState(false);
   const [updateMessage, setUpdateMessage] = useState({ type: "", text: "" });
@@ -42,7 +43,15 @@ export default function StudentDashboard() {
             setUserData(data);
             setFirstName(data.firstName || "");
             setLastName(data.lastName || "");
-            setPhone(data.phone || "");
+            
+            const fullPhone = data.phone || "";
+            if (fullPhone.startsWith("+") && fullPhone.includes(" ")) {
+              const spaceIndex = fullPhone.indexOf(" ");
+              setCountryCode(fullPhone.substring(0, spaceIndex));
+              setPhone(fullPhone.substring(spaceIndex + 1));
+            } else {
+              setPhone(fullPhone);
+            }
           }
           fetchMyEnrollments(user.email);
         } catch (error) {
@@ -102,9 +111,9 @@ export default function StudentDashboard() {
       await updateDoc(doc(db, "users", currentUser.uid), {
         firstName,
         lastName,
-        phone
+        phone: `${countryCode} ${phone}`
       });
-      setUserData({ ...userData, firstName, lastName, phone });
+      setUserData({ ...userData, firstName, lastName, phone: `${countryCode} ${phone}` });
       setUpdateMessage({ type: "success", text: "Profile updated successfully!" });
       setTimeout(() => setUpdateMessage({ type: "", text: "" }), 3000);
     } catch (error) {
@@ -301,15 +310,29 @@ export default function StudentDashboard() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
-                <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-academy-black border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
-                    placeholder="Phone Number"
-                  />
+                <div className="flex gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-1/3 bg-academy-black border border-gray-700 rounded-lg px-2 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                  >
+                    <option value="+94">+94 (LK)</option>
+                    <option value="+1">+1 (US/CA)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+971">+971 (UAE)</option>
+                  </select>
+                  <div className="relative w-2/3">
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                      placeholder="77 123 4567"
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [countryCode, setCountryCode] = useState("+94");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,7 +45,7 @@ export default function LoginPage() {
           email: userCredential.user.email,
           firstName,
           lastName,
-          phone,
+          phone: `${countryCode} ${phone}`,
           role: userRole,
           createdAt: serverTimestamp()
         });
@@ -117,14 +118,28 @@ export default function LoginPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  required={!isLogin}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
-                  placeholder="Phone Number"
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-1/3 bg-academy-black border border-gray-700 rounded-lg px-2 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                  >
+                    <option value="+94">+94 (LK)</option>
+                    <option value="+1">+1 (US/CA)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+971">+971 (UAE)</option>
+                  </select>
+                  <input
+                    type="tel"
+                    required={!isLogin}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-2/3 bg-academy-black border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                    placeholder="77 123 4567"
+                  />
+                </div>
               </div>
             </>
           )}

@@ -12,6 +12,7 @@ const EnrollmentSection = () => {
     email: "",
     preferred_style: "Kandyan",
   });
+  const [countryCode, setCountryCode] = useState("+94");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({
     type: null,
@@ -33,6 +34,7 @@ const EnrollmentSection = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          phone: `${countryCode} ${formData.phone}`,
           age: parseInt(formData.age),
         }),
       });
@@ -143,15 +145,29 @@ const EnrollmentSection = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full bg-academy-gray border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
-                  placeholder="+1 234 567 890"
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-1/3 bg-academy-gray border border-gray-700 rounded-lg px-2 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                  >
+                    <option value="+94">+94 (LK)</option>
+                    <option value="+1">+1 (US/CA)</option>
+                    <option value="+44">+44 (UK)</option>
+                    <option value="+61">+61 (AU)</option>
+                    <option value="+91">+91 (IN)</option>
+                    <option value="+971">+971 (UAE)</option>
+                  </select>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-2/3 bg-academy-gray border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                    placeholder="77 123 4567"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
