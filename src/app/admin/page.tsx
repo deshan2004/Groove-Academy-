@@ -5,10 +5,12 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Users, Mail, Phone, Calendar } from "lucide-react";
+import { Users, Mail, Phone, Calendar, UserCog, Shield } from "lucide-react";
 
 export default function AdminDashboard() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"enrollments" | "users">("enrollments");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -46,6 +48,24 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   };
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      if (data.success) {
+        setRegisteredUsers(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "users" && registeredUsers.length === 0) {
+      fetchUsers();
+    }
+  }, [activeTab]);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
@@ -102,6 +122,37 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="flex space-x-2 mb-8 border-b border-gray-800 pb-px">
+          <button
+            onClick={() => setActiveTab("enrollments")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "enrollments" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Enrollments
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("users")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "users" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <UserCog className="w-4 h-4" />
+              Registered Students
+            </div>
+          </button>
+        </div>
+
+        {activeTab === "enrollments" ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -187,6 +238,79 @@ export default function AdminDashboard() {
             </table>
           </div>
         </motion.div>
+        ) : (
+        <motion.div
+          key="users"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-academy-gray border border-gray-800 rounded-3xl shadow-2xl overflow-hidden"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-black/50 text-gray-400 text-sm uppercase tracking-wider">
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">User</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Contact</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Role</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Joined</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {registeredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      No registered users found.
+                    </td>
+                  </tr>
+                ) : (
+                  registeredUsers.map((user) => (
+                    <tr key={user.uid} className="hover:bg-black/20 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-academy-black flex items-center justify-center text-academy-gold font-bold">
+                            {(user.firstName || user.email)?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-white">
+                              {user.firstName || user.lastName ? `${user.firstName || ""} ${user.lastName || ""}` : "Unknown"}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm text-gray-300 flex items-center gap-2 mb-1">
+                          <Mail className="w-4 h-4 text-gray-500" /> {user.email}
+                        </div>
+                        {user.phone && (
+                          <div className="text-sm text-gray-300 flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-gray-500" /> {user.phone}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        {user.role === "admin" ? (
+                          <span className="px-3 py-1 inline-flex items-center gap-1 text-xs leading-5 font-semibold rounded-full bg-red-900/30 text-red-400 border border-red-500/30">
+                            <Shield className="w-3 h-3" /> Admin
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-800 text-gray-300 border border-gray-700">
+                            Student
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-400">
+                        {user.createdAt?.seconds 
+                          ? new Date(user.createdAt.seconds * 1000).toLocaleDateString()
+                          : "Unknown"}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+        )}
       </div>
     </div>
   );

@@ -2,16 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Calendar, User, Mail, MapPin, Clock } from "lucide-react";
+import { Calendar, User, Mail, MapPin, Clock, Settings, Phone, LogOut } from "lucide-react";
 import Link from "next/link";
 
 export default function StudentDashboard() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userData, setUserData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<"classes" | "profile">("classes");
+  
+  // Profile form state
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [updating, setUpdating] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState({ type: "", text: "" });
+
   const router = useRouter();
 
   useEffect(() => {
@@ -23,9 +33,16 @@ export default function StudentDashboard() {
         try {
           // Check if admin, redirect them out of here
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
-            router.push("/admin");
-            return;
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            if (data.role?.toLowerCase() === "admin") {
+              router.push("/admin");
+              return;
+            }
+            setUserData(data);
+            setFirstName(data.firstName || "");
+            setLastName(data.lastName || "");
+            setPhone(data.phone || "");
           }
           fetchMyEnrollments(user.email);
         } catch (error) {
@@ -74,30 +91,97 @@ export default function StudentDashboard() {
     );
   }
 
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+    
+    setUpdating(true);
+    setUpdateMessage({ type: "", text: "" });
+    
+    try {
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        firstName,
+        lastName,
+        phone
+      });
+      setUserData({ ...userData, firstName, lastName, phone });
+      setUpdateMessage({ type: "success", text: "Profile updated successfully!" });
+      setTimeout(() => setUpdateMessage({ type: "", text: "" }), 3000);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setUpdateMessage({ type: "error", text: "Failed to update profile." });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-academy-black pt-24 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">My Dashboard</h1>
-            <p className="text-gray-400">Welcome back! Here are your class enrollments.</p>
+            <p className="text-gray-400">Welcome back, {userData?.firstName || "Student"}!</p>
           </div>
-          <div className="bg-academy-gray border border-gray-800 px-6 py-4 rounded-xl flex items-center gap-4 shadow-lg w-full md:w-auto">
-            <div className="h-12 w-12 rounded-full bg-academy-gold/20 flex items-center justify-center text-academy-gold font-bold text-xl">
-              {currentUser?.email?.charAt(0).toUpperCase()}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="bg-academy-gray border border-gray-800 px-6 py-4 rounded-xl flex items-center gap-4 shadow-lg">
+              <div className="h-12 w-12 rounded-full bg-academy-gold/20 flex items-center justify-center text-academy-gold font-bold text-xl">
+                {(userData?.firstName?.charAt(0) || currentUser?.email?.charAt(0))?.toUpperCase()}
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Logged in as</p>
+                <p className="font-medium text-white truncate max-w-[200px]">{currentUser?.email}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-400">Logged in as</p>
-              <p className="font-medium text-white truncate max-w-[200px]">{currentUser?.email}</p>
-            </div>
+            <button
+              onClick={() => {
+                auth.signOut();
+                router.push("/login");
+              }}
+              className="bg-red-900/30 hover:bg-red-900/50 text-red-400 border border-red-500/30 px-4 rounded-xl font-medium transition-all flex items-center justify-center"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
+        {/* Tab Navigation */}
+        <div className="flex space-x-2 mb-8 border-b border-gray-800 pb-px">
+          <button
+            onClick={() => setActiveTab("classes")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "classes" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              My Classes
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("profile")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "profile" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              My Profile
+            </div>
+          </button>
+        </div>
+
+        {activeTab === "classes" ? (
+          <motion.div
+            key="classes"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
           <h2 className="text-2xl font-bold text-white mb-6">My Classes</h2>
           
           {enrollments.length === 0 ? (
@@ -152,6 +236,95 @@ export default function StudentDashboard() {
             </div>
           )}
         </motion.div>
+        ) : (
+          <motion.div
+            key="profile"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-academy-gray border border-gray-800 rounded-3xl p-8 shadow-2xl max-w-2xl"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6">Profile Settings</h2>
+            
+            {updateMessage.text && (
+              <div className={`p-4 rounded-lg mb-6 ${
+                updateMessage.type === "success" 
+                  ? "bg-green-900/30 text-green-400 border border-green-500/30" 
+                  : "bg-red-900/30 text-red-400 border border-red-500/30"
+              }`}>
+                {updateMessage.text}
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateProfile} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">First Name</label>
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                      placeholder="First Name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Last Name</label>
+                  <div className="relative">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                      placeholder="Last Name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="email"
+                    value={currentUser?.email || ""}
+                    disabled
+                    className="w-full bg-academy-black/50 border border-gray-800 rounded-lg pl-12 pr-4 py-3 text-gray-500 cursor-not-allowed"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Email address cannot be changed.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Phone Number</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-academy-black border border-gray-700 rounded-lg pl-12 pr-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                    placeholder="Phone Number"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-800">
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="bg-academy-gold hover:bg-yellow-600 text-black font-bold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {updating ? "Saving Changes..." : "Save Profile"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
       </div>
     </div>
   );
