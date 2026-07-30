@@ -367,7 +367,7 @@ export default function AdminDashboard() {
             </table>
           </div>
         </motion.div>
-        ) : (
+        ) : activeTab === "users" ? (
         <motion.div
           key="users"
           initial={{ opacity: 0, y: 20 }}
