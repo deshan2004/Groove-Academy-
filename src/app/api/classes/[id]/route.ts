@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import { doc, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     
     const classRef = doc(db, "classes", id);
@@ -26,9 +26,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     const classRef = doc(db, "classes", id);
     const classSnap = await getDoc(classRef);
