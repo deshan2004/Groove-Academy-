@@ -10,6 +10,7 @@ const EnrollmentSection = () => {
     age: "",
     phone: "",
     email: "",
+    location: "",
     preferred_style: "Kandyan",
   });
   const [countryCode, setCountryCode] = useState("+94");
@@ -50,6 +51,7 @@ const EnrollmentSection = () => {
           age: "",
           phone: "",
           email: "",
+          location: "",
           preferred_style: "Kandyan",
         });
       } else {
@@ -183,20 +185,35 @@ const EnrollmentSection = () => {
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Preferred Dance Style</label>
-              <select
-                name="preferred_style"
-                required
-                value={formData.preferred_style}
-                onChange={handleChange}
-                className="w-full bg-academy-gray border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
-              >
-                <option value="Kandyan">Kandyan</option>
-                <option value="Hip-Hop">Hip-Hop</option>
-                <option value="Classical">Classical</option>
-                <option value="Contemporary">Contemporary</option>
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Location / City</label>
+                <input
+                  type="text"
+                  name="location"
+                  required
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="w-full bg-academy-gray border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                  placeholder="e.g. Colombo"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-2">Preferred Dance Style</label>
+                <select
+                  name="preferred_style"
+                  required
+                  value={formData.preferred_style}
+                  onChange={handleChange}
+                  className="w-full bg-academy-gray border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-academy-gold focus:ring-1 focus:ring-academy-gold transition-colors"
+                >
+                  <option value="Kandyan">Kandyan</option>
+                  <option value="Hip-Hop">Hip-Hop</option>
+                  <option value="Classical">Classical</option>
+                  <option value="Contemporary">Contemporary</option>
+                </select>
+              </div>
             </div>
 
             <button

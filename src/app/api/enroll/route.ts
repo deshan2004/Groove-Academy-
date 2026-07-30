@@ -44,6 +44,7 @@ export async function POST(request: Request) {
       !body.age ||
       !body.phone ||
       !body.email ||
+      !body.location ||
       !body.preferred_style
     ) {
       return NextResponse.json(

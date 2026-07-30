@@ -293,6 +293,7 @@ export default function AdminDashboard() {
                 <tr className="bg-black/50 text-gray-400 text-sm uppercase tracking-wider">
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Student</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Contact</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Location</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Age</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Style</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Status</th>
@@ -327,6 +328,7 @@ export default function AdminDashboard() {
                           <Phone className="w-4 h-4 text-gray-500" /> {student.phone}
                         </div>
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-300">{student.location || "N/A"}</td>
                       <td className="px-6 py-4 text-sm text-gray-300">{student.age} yrs</td>
                       <td className="px-6 py-4">
                         <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-academy-gold/10 text-academy-gold border border-academy-gold/20">
