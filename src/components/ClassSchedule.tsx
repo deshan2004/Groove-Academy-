@@ -13,12 +13,7 @@ export interface IClass {
   hall_no: string;
 }
 
-const fallbackClasses: IClass[] = [
-  { _id: "1", title: "Beginner Hip-Hop", style: "Hip-Hop", day: "Monday", time: "18:00 - 19:30", instructor_name: "Alex Vance", hall_no: "Hall A" },
-  { _id: "2", title: "Traditional Kandyan", style: "Kandyan", day: "Wednesday", time: "17:00 - 19:00", instructor_name: "Senaka Perera", hall_no: "Main Studio" },
-  { _id: "3", title: "Contemporary Flow", style: "Contemporary", day: "Friday", time: "19:00 - 20:30", instructor_name: "Elena Rostova", hall_no: "Hall B" },
-  { _id: "4", title: "Classical Fundamentals", style: "Classical", day: "Saturday", time: "10:00 - 12:00", instructor_name: "Priya Sharma", hall_no: "Studio 2" },
-];
+
 
 const ClassSchedule = () => {
   const [classes, setClasses] = useState<IClass[]>([]);
@@ -29,14 +24,11 @@ const ClassSchedule = () => {
       try {
         const res = await fetch("/api/classes");
         const json = await res.json();
-        if (json.success && json.data.length > 0) {
+        if (json.success) {
           setClasses(json.data);
-        } else {
-          setClasses(fallbackClasses);
         }
       } catch (error) {
         console.error("Error fetching classes", error);
-        setClasses(fallbackClasses);
       } finally {
         setLoading(false);
       }
@@ -67,6 +59,14 @@ const ClassSchedule = () => {
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-academy-gold"></div>
+          </div>
+        ) : classes.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="w-20 h-20 bg-academy-gray border border-gray-800 rounded-full flex items-center justify-center mb-6">
+              <Calendar className="w-10 h-10 text-gray-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">No Classes Scheduled</h3>
+            <p className="text-gray-400">Please check back later or contact the academy for the latest schedule.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">

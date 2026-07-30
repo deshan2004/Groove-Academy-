@@ -5,13 +5,27 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Users, Mail, Phone, Calendar, UserCog, Shield } from "lucide-react";
+import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Trash2, X } from "lucide-react";
 
 export default function AdminDashboard() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"enrollments" | "users">("enrollments");
+  const [classes, setClasses] = useState<any[]>([]);
+  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"enrollments" | "users" | "classes" | "inquiries">("enrollments");
   const [loading, setLoading] = useState(true);
+  
+  // Class Form State
+  const [showClassModal, setShowClassModal] = useState(false);
+  const [editingClass, setEditingClass] = useState<any>(null);
+  const [classForm, setClassForm] = useState({
+    title: "",
+    style: "Kandyan",
+    day: "Monday",
+    time: "",
+    instructor_name: "",
+    hall_no: "",
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -61,9 +75,39 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchClasses = async () => {
+    try {
+      const res = await fetch("/api/classes");
+      const data = await res.json();
+      if (data.success) {
+        setClasses(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+  };
+
+  const fetchInquiries = async () => {
+    try {
+      const res = await fetch("/api/contact");
+      const data = await res.json();
+      if (data.success) {
+        setInquiries(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching inquiries:", error);
+    }
+  };
+
   useEffect(() => {
     if (activeTab === "users" && registeredUsers.length === 0) {
       fetchUsers();
+    }
+    if (activeTab === "classes" && classes.length === 0) {
+      fetchClasses();
+    }
+    if (activeTab === "inquiries" && inquiries.length === 0) {
+      fetchInquiries();
     }
   }, [activeTab]);
 
@@ -81,6 +125,65 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error updating status:", error);
     }
+  };
+
+  const handleSaveClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const method = editingClass ? "PUT" : "POST";
+      const url = editingClass ? `/api/classes/${editingClass._id}` : "/api/classes";
+      
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(classForm)
+      });
+      
+      if (res.ok) {
+        setShowClassModal(false);
+        setEditingClass(null);
+        fetchClasses(); // Refresh list
+      }
+    } catch (error) {
+      console.error("Error saving class:", error);
+    }
+  };
+
+  const handleDeleteClass = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this class?")) return;
+    try {
+      const res = await fetch(`/api/classes/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setClasses(classes.filter(c => c._id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting class:", error);
+    }
+  };
+
+  const openClassModal = (cls: any = null) => {
+    if (cls) {
+      setEditingClass(cls);
+      setClassForm({
+        title: cls.title,
+        style: cls.style,
+        day: cls.day,
+        time: cls.time,
+        instructor_name: cls.instructor_name,
+        hall_no: cls.hall_no,
+      });
+    } else {
+      setEditingClass(null);
+      setClassForm({
+        title: "",
+        style: "Kandyan",
+        day: "Monday",
+        time: "",
+        instructor_name: "",
+        hall_no: "",
+      });
+    }
+    setShowClassModal(true);
   };
 
   if (loading) {
@@ -148,6 +251,32 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2">
               <UserCog className="w-4 h-4" />
               Registered Students
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("classes")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "classes" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Manage Classes
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("inquiries")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "inquiries" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              Inquiries
             </div>
           </button>
         </div>
@@ -310,6 +439,240 @@ export default function AdminDashboard() {
             </table>
           </div>
         </motion.div>
+        ) : activeTab === "classes" ? (
+        <motion.div
+          key="classes"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-academy-gray border border-gray-800 rounded-3xl shadow-2xl overflow-hidden p-6"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-white">Class Schedule</h2>
+            <button
+              onClick={() => openClassModal()}
+              className="bg-academy-gold hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Add Class
+            </button>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-black/50 text-gray-400 text-sm uppercase tracking-wider">
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Title</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Style</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Schedule</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Instructor</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Hall</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {classes.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      No classes found. Add one to get started.
+                    </td>
+                  </tr>
+                ) : (
+                  classes.map((cls) => (
+                    <tr key={cls._id} className="hover:bg-black/20 transition-colors">
+                      <td className="px-6 py-4 text-white font-medium">{cls.title}</td>
+                      <td className="px-6 py-4 text-academy-gold text-sm">{cls.style}</td>
+                      <td className="px-6 py-4 text-gray-300 text-sm">
+                        {cls.day} <br />
+                        <span className="text-gray-500">{cls.time}</span>
+                      </td>
+                      <td className="px-6 py-4 text-gray-300 text-sm">{cls.instructor_name}</td>
+                      <td className="px-6 py-4 text-gray-300 text-sm">{cls.hall_no}</td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => openClassModal(cls)}
+                            className="p-2 bg-blue-900/30 text-blue-400 hover:bg-blue-900/60 rounded-md transition-colors"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClass(cls._id)}
+                            className="p-2 bg-red-900/30 text-red-400 hover:bg-red-900/60 rounded-md transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+        ) : activeTab === "inquiries" ? (
+        <motion.div
+          key="inquiries"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-academy-gray border border-gray-800 rounded-3xl shadow-2xl overflow-hidden"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-black/50 text-gray-400 text-sm uppercase tracking-wider">
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Sender</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Subject</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Message</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {inquiries.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      No inquiries found.
+                    </td>
+                  </tr>
+                ) : (
+                  inquiries.map((inq) => (
+                    <tr key={inq._id} className="hover:bg-black/20 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-medium text-white">{inq.name}</div>
+                        <div className="text-sm text-gray-400 flex items-center gap-1 mt-1">
+                          <Mail className="w-3 h-3" /> {inq.email}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-white text-sm font-medium">
+                        {inq.subject}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-300 max-w-xs truncate">
+                        {inq.message}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-400">
+                        {inq.createdAt?.seconds 
+                          ? new Date(inq.createdAt.seconds * 1000).toLocaleDateString()
+                          : "Unknown"}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+        ) : null}
+
+        {/* Class Modal */}
+        {showClassModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-academy-gray border border-gray-800 rounded-2xl w-full max-w-lg p-6 relative"
+            >
+              <button 
+                onClick={() => setShowClassModal(false)}
+                className="absolute right-4 top-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                {editingClass ? "Edit Class" : "Add New Class"}
+              </h2>
+              
+              <form onSubmit={handleSaveClass} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Class Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={classForm.title}
+                    onChange={(e) => setClassForm({...classForm, title: e.target.value})}
+                    className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                    placeholder="e.g. Beginner Hip-Hop"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Dance Style</label>
+                    <select
+                      value={classForm.style}
+                      onChange={(e) => setClassForm({...classForm, style: e.target.value})}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                    >
+                      <option value="Kandyan">Kandyan</option>
+                      <option value="Hip-Hop">Hip-Hop</option>
+                      <option value="Classical">Classical</option>
+                      <option value="Contemporary">Contemporary</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Instructor</label>
+                    <input
+                      type="text"
+                      required
+                      value={classForm.instructor_name}
+                      onChange={(e) => setClassForm({...classForm, instructor_name: e.target.value})}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Day</label>
+                    <select
+                      value={classForm.day}
+                      onChange={(e) => setClassForm({...classForm, day: e.target.value})}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                    >
+                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(d => (
+                        <option key={d} value={d}>{d}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Time</label>
+                    <input
+                      type="text"
+                      required
+                      value={classForm.time}
+                      onChange={(e) => setClassForm({...classForm, time: e.target.value})}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                      placeholder="18:00 - 19:30"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-1">Hall No.</label>
+                    <input
+                      type="text"
+                      required
+                      value={classForm.hall_no}
+                      onChange={(e) => setClassForm({...classForm, hall_no: e.target.value})}
+                      className="w-full bg-academy-black border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-academy-gold focus:ring-1 focus:ring-academy-gold"
+                    />
+                  </div>
+                </div>
+                
+                <div className="pt-4 flex justify-end gap-3 border-t border-gray-800">
+                  <button
+                    type="button"
+                    onClick={() => setShowClassModal(false)}
+                    className="px-4 py-2 rounded-lg font-medium text-gray-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-academy-gold hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-lg transition-colors"
+                  >
+                    {editingClass ? "Save Changes" : "Create Class"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
         )}
       </div>
     </div>
