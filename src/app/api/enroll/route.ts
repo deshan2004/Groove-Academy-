@@ -34,6 +34,10 @@ export async function GET() {
   }
 }
 
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -58,6 +62,29 @@ export async function POST(request: Request) {
       status: "pending",
       createdAt: serverTimestamp(),
     });
+
+    // Send welcome email to student
+    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder_key") {
+      try {
+        await resend.emails.send({
+          from: 'StepUp Academy <noreply@stepupdanceacademy.com>', // Ensure domain is verified in Resend
+          to: body.email,
+          subject: 'Welcome to StepUp Dance Academy!',
+          html: `<h1>Welcome ${body.student_name}!</h1><p>Thank you for enrolling in our <b>${body.preferred_style}</b> class. Your enrollment is currently pending approval. We will contact you soon!</p>`
+        });
+        
+        // Notify admin
+        await resend.emails.send({
+          from: 'StepUp Academy <noreply@stepupdanceacademy.com>',
+          to: 'admin@stepupdanceacademy.com', // Replace with actual admin email
+          subject: 'New Student Enrollment',
+          html: `<p>A new student has enrolled:</p><ul><li>Name: ${body.student_name}</li><li>Class: ${body.preferred_style}</li><li>Phone: ${body.phone}</li></ul>`
+        });
+      } catch (emailError) {
+        console.error("Error sending emails:", emailError);
+        // Don't fail the request if email fails
+      }
+    }
 
     return NextResponse.json(
       { success: true, data: { _id: docRef.id, ...body, status: "pending" } },
