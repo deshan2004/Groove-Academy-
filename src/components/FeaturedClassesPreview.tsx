@@ -16,6 +16,24 @@ const featuredClasses = [
   },
   {
     id: 2,
+    title: "Pahatharata Traditional",
+    level: "Intermediate",
+    duration: "1.5 Hours",
+    spots: "15 Spots",
+    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80",
+    color: "from-red-600/80 to-orange-600/80"
+  },
+  {
+    id: 3,
+    title: "Sabaragamuwa Traditional",
+    level: "Advanced",
+    duration: "2 Hours",
+    spots: "12 Spots",
+    image: "https://images.unsplash.com/photo-1533147670608-2a2f9776d3ac?auto=format&fit=crop&q=80",
+    color: "from-yellow-500/80 to-amber-700/80"
+  },
+  {
+    id: 4,
     title: "Urban Hip-Hop",
     level: "Intermediate",
     duration: "1.5 Hours",
@@ -24,13 +42,22 @@ const featuredClasses = [
     color: "from-blue-600/80 to-purple-600/80"
   },
   {
-    id: 3,
+    id: 5,
     title: "Contemporary Flow",
     level: "Advanced",
     duration: "2 Hours",
     spots: "12 Spots",
     image: "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?auto=format&fit=crop&q=80",
     color: "from-pink-500/80 to-academy-red/80"
+  },
+  {
+    id: 6,
+    title: "Sri Lankan Folk Dance",
+    level: "Beginner",
+    duration: "1 Hour",
+    spots: "25 Spots",
+    image: "https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80",
+    color: "from-green-500/80 to-teal-700/80"
   }
 ];
 
