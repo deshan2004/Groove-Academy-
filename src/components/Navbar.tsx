@@ -47,6 +47,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", href: "/" },
+    { name: "Events", href: "/events" },
     { name: "Contact", href: "/contact" },
     ...(currentUser ? [
       { name: "Classes", href: "/classes" },

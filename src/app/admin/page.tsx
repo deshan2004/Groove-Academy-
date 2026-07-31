@@ -5,14 +5,16 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Trash2, X } from "lucide-react";
+import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Trash2, X, CheckCircle, Star } from "lucide-react";
+import AttendanceTab from "@/components/admin/AttendanceTab";
+import EventsTab from "@/components/admin/EventsTab";
 
 export default function AdminDashboard() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
   const [classes, setClasses] = useState<any[]>([]);
   const [inquiries, setInquiries] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"enrollments" | "users" | "classes" | "inquiries">("enrollments");
+  const [activeTab, setActiveTab] = useState<"enrollments" | "users" | "classes" | "inquiries" | "attendance" | "events">("enrollments");
   const [loading, setLoading] = useState(true);
   
   // Class Form State
@@ -277,6 +279,32 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2">
               <Mail className="w-4 h-4" />
               Inquiries
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("attendance")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "attendance" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4" />
+              Attendance
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("events")}
+            className={`px-6 py-3 font-medium transition-colors border-b-2 ${
+              activeTab === "events" 
+                ? "text-academy-gold border-academy-gold" 
+                : "text-gray-500 border-transparent hover:text-gray-300"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4" />
+              Events
             </div>
           </button>
         </div>
@@ -562,6 +590,10 @@ export default function AdminDashboard() {
             </table>
           </div>
         </motion.div>
+        ) : activeTab === "attendance" ? (
+          <AttendanceTab classes={classes} enrollments={enrollments} />
+        ) : activeTab === "events" ? (
+          <EventsTab />
         ) : null}
 
         {/* Class Modal */}
