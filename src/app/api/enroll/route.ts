@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder_key") {
       try {
         await resend.emails.send({
-          from: 'StepUp Academy <noreply@stepupdanceacademy.com>', // Ensure domain is verified in Resend
+          from: 'onboarding@resend.dev', // Use resend's default domain for testing
           to: body.email,
           subject: 'Welcome to StepUp Dance Academy!',
           html: `<h1>Welcome ${body.student_name}!</h1><p>Thank you for enrolling in our <b>${body.preferred_style}</b> class. Your enrollment is currently pending approval. We will contact you soon!</p>`
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         
         // Notify admin
         await resend.emails.send({
-          from: 'StepUp Academy <noreply@stepupdanceacademy.com>',
+          from: 'onboarding@resend.dev',
           to: 'admin@stepupdanceacademy.com', // Replace with actual admin email
           subject: 'New Student Enrollment',
           html: `<p>A new student has enrolled:</p><ul><li>Name: ${body.student_name}</li><li>Class: ${body.preferred_style}</li><li>Phone: ${body.phone}</li></ul>`

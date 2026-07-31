@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder_key") {
       try {
         await resend.emails.send({
-          from: 'StepUp Academy <noreply@stepupdanceacademy.com>', // Ensure domain is verified in Resend
+          from: 'onboarding@resend.dev', // Use resend's default domain for testing
           to: 'admin@stepupdanceacademy.com', // Replace with actual admin email
           subject: 'New Contact Inquiry',
           html: `<p>You have a new inquiry from the website:</p><ul><li>Name: ${body.name}</li><li>Email: ${body.email}</li><li>Phone: ${body.phone}</li><li>Message: ${body.message}</li></ul>`
