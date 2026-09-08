@@ -103,51 +103,52 @@ export default function FeaturedClassesPreview() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredClasses.map((cls, index) => (
-            <motion.div
-              key={cls.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden cursor-pointer border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_35px_rgba(168,85,247,0.35)] transition-all duration-500"
-            >
-              {/* Background Image */}
-              <div className="absolute inset-0">
-                <img 
-                  src={cls.image} 
-                  alt={cls.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
-              
-              {/* Gradient Overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-t ${cls.color} mix-blend-multiply opacity-70 group-hover:opacity-50 transition-opacity duration-500`}></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090410] via-[#090410]/60 to-transparent opacity-90"></div>
-              
-              {/* Content */}
-              <div className="relative p-8 h-full min-h-[400px] flex flex-col justify-end transform transition-transform duration-500 group-hover:-translate-y-2">
-                <div className="mb-4">
-                  <span className="px-3.5 py-1 bg-purple-950/80 backdrop-blur-md rounded-full text-xs font-semibold text-purple-200 tracking-widest uppercase border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.3)]">
-                    {cls.level}
-                  </span>
+            <Link key={cls.id} href="/enroll" className="block h-full">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="group relative rounded-3xl overflow-hidden cursor-pointer border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_35px_rgba(168,85,247,0.35)] transition-all duration-500 h-full"
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  <img 
+                    src={cls.image} 
+                    alt={cls.title} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-fuchsia-300 transition-colors">
-                  {cls.title}
-                </h3>
+                {/* Gradient Overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-t ${cls.color} mix-blend-multiply opacity-70 group-hover:opacity-50 transition-opacity duration-500`}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090410] via-[#090410]/60 to-transparent opacity-90"></div>
                 
-                <div className="flex items-center gap-6 text-sm text-purple-200/80">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-fuchsia-400" />
-                    {cls.duration}
+                {/* Content */}
+                <div className="relative p-8 h-full min-h-[400px] flex flex-col justify-end transform transition-transform duration-500 group-hover:-translate-y-2">
+                  <div className="mb-4">
+                    <span className="px-3.5 py-1 bg-purple-950/80 backdrop-blur-md rounded-full text-xs font-semibold text-purple-200 tracking-widest uppercase border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+                      {cls.level}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-400" />
-                    {cls.spots}
+                  
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-fuchsia-300 transition-colors">
+                    {cls.title}
+                  </h3>
+                  
+                  <div className="flex items-center gap-6 text-sm text-purple-200/80">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-fuchsia-400" />
+                      {cls.duration}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-purple-400" />
+                      {cls.spots}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </div>

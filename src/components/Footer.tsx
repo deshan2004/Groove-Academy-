@@ -31,19 +31,25 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-extrabold text-sm uppercase tracking-widest mb-6 text-purple-300">Quick Links</h4>
-            <ul className="space-y-4">
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-widest mb-6 text-purple-300">Divisions & Links</h4>
+            <ul className="space-y-3 font-medium text-xs tracking-wider uppercase">
               <li>
-                <Link href="/" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Home</Link>
+                <Link href="/classes" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Academy</Link>
               </li>
               <li>
-                <Link href="/classes" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Classes</Link>
+                <Link href="/crew" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Crew</Link>
               </li>
               <li>
-                <Link href="/enroll" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Enroll</Link>
+                <Link href="/rentals" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Rentals</Link>
               </li>
               <li>
-                <Link href="/events" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Events</Link>
+                <Link href="/productions" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Productions</Link>
+              </li>
+              <li>
+                <Link href="/events" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Events</Link>
+              </li>
+              <li>
+                <Link href="/gallery" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors">Gallery</Link>
               </li>
             </ul>
           </div>
