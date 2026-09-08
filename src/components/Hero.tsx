@@ -26,12 +26,12 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="w-full max-w-4xl flex flex-col items-center mb-8 px-2"
         >
-          {/* High-Resolution 3D Metallic RIGA Wordmark Image */}
-          <div className="w-full relative py-2 mb-2">
+          {/* High-Resolution 3D Metallic RIGA Wordmark Image - SEAMLESS BLEND */}
+          <div className="w-full relative py-2 mb-2 flex justify-center items-center pointer-events-none select-none">
             <img 
               src="/images/riga-wordmark.png" 
               alt="RIGA" 
-              className="w-full max-w-2xl sm:max-w-3xl h-auto object-contain block mx-auto filter drop-shadow-[0_0_35px_rgba(168,85,247,0.55)]"
+              className="w-full max-w-2xl sm:max-w-3xl h-auto object-contain block mx-auto mix-blend-screen filter drop-shadow-[0_0_40px_rgba(168,85,247,0.65)] [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)]"
             />
           </div>
 
@@ -46,6 +46,7 @@ const Hero = () => {
               DANCE ACADEMY
             </h2>
           </motion.div>
+
 
           {/* DIVIDER LINE & TAGLINE - GUARANTEED NON-WRAPPING */}
           <motion.div 
