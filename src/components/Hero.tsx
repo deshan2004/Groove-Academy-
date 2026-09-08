@@ -17,96 +17,32 @@ const Hero = () => {
       </div>
 
       {/* Main Container */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
         
-        {/* --- NATIVE VECTOR SVG + METALLIC SHIMMER LOGO COMPOSITION --- */}
+        {/* --- RIGA WORDMARK LOGO IMAGE + NATIVE HTML TYPOGRAPHY --- */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.9, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           className="w-full max-w-4xl flex flex-col items-center mb-8 px-2"
         >
-          {/* Vector RIGA Logo */}
-          <div className="w-full relative py-2">
-            <svg 
-              viewBox="0 0 920 220" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-auto max-h-[220px] sm:max-h-[280px] filter drop-shadow-[0_0_35px_rgba(168,85,247,0.5)]"
-            >
-              <defs>
-                {/* 3D Metallic Violet Sheen Gradient */}
-                <linearGradient id="metallicViolet" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="18%" stopColor="#F3E8FF" />
-                  <stop offset="40%" stopColor="#D8B4FE" />
-                  <stop offset="65%" stopColor="#A855F7" />
-                  <stop offset="88%" stopColor="#7E22CE" />
-                  <stop offset="100%" stopColor="#F0ABFC" />
-                </linearGradient>
-
-                <linearGradient id="dancerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="25%" stopColor="#E9D5FF" />
-                  <stop offset="60%" stopColor="#C084FC" />
-                  <stop offset="100%" stopColor="#9333EA" />
-                </linearGradient>
-
-                <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="7" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-
-              {/* LETTER R */}
-              <path
-                d="M 100 180 C 160 180 230 175 270 168 C 305 160 340 140 300 112 C 265 88 190 85 100 85 L 100 70 L 320 70 C 375 70 380 110 320 135 C 280 148 240 148 245 153 C 265 158 295 168 340 180 L 100 180 Z"
-                fill="url(#metallicViolet)"
-              />
-
-              {/* DANCER SILHOUETTE (LETTER 'I') */}
-              <g transform="translate(320, 0)">
-                <path
-                  d="M 42 220 Q 38 180 40 140 Q 42 100 25 70 Q 15 50 22 35 C 28 20 48 20 52 35 C 55 45 42 60 48 85 Q 56 120 50 160 Q 46 195 42 220 Z"
-                  fill="url(#dancerGradient)"
-                  filter="url(#neonGlow)"
-                />
-                <path
-                  d="M 45 40 Q 60 25 85 5 Q 88 12 72 32 Q 52 50 45 55 Z"
-                  fill="url(#dancerGradient)"
-                />
-                <path
-                  d="M 38 100 Q 25 120 15 150 Q 10 165 18 162 Q 28 145 38 125 Z"
-                  fill="url(#dancerGradient)"
-                />
-              </g>
-
-              {/* LETTER G */}
-              <path
-                d="M 435 70 L 590 70 L 590 100 L 480 100 L 480 150 L 545 150 L 545 125 L 515 125 L 515 105 L 590 105 L 590 180 L 435 180 Z"
-                fill="url(#metallicViolet)"
-              />
-
-              {/* LETTER A */}
-              <path
-                d="M 685 60 L 795 180 L 745 180 L 730 160 L 655 160 L 675 135 L 715 135 L 690 90 L 625 180 L 575 180 Z"
-                fill="url(#metallicViolet)"
-              />
-
-              {/* Lens Flare Sparkle on Letter A Apex */}
-              <circle cx="685" cy="60" r="5" fill="#FFFFFF" filter="url(#neonGlow)" />
-              <path d="M 685 40 L 685 80 M 665 60 L 705 60" stroke="#FFFFFF" strokeWidth="2" opacity="0.85" />
-            </svg>
+          {/* High-Resolution 3D Metallic RIGA Wordmark Image */}
+          <div className="w-full relative py-2 mb-2">
+            <img 
+              src="/images/riga-wordmark.png" 
+              alt="RIGA" 
+              className="w-full max-w-2xl sm:max-w-3xl h-auto object-contain block mx-auto filter drop-shadow-[0_0_35px_rgba(168,85,247,0.55)]"
+            />
           </div>
 
           {/* DANCE ACADEMY TEXT - GUARANTEED NON-WRAPPING */}
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="w-full overflow-hidden text-center"
           >
-            <h2 className="whitespace-nowrap select-none text-[5vw] sm:text-3xl md:text-5xl font-light tracking-[0.3em] sm:tracking-[0.55em] text-transparent bg-clip-text bg-gradient-to-r from-purple-100 via-fuchsia-200 to-purple-300 uppercase mt-1 mb-3 font-sans drop-shadow-[0_0_15px_rgba(192,132,252,0.6)]">
+            <h2 className="whitespace-nowrap select-none text-[5.5vw] sm:text-4xl md:text-5xl font-light tracking-[0.35em] sm:tracking-[0.55em] text-transparent bg-clip-text bg-gradient-to-r from-purple-100 via-fuchsia-200 to-purple-300 uppercase mt-2 mb-3 font-sans drop-shadow-[0_0_15px_rgba(192,132,252,0.6)]">
               DANCE ACADEMY
             </h2>
           </motion.div>
@@ -115,7 +51,7 @@ const Hero = () => {
           <motion.div 
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full flex items-center justify-center gap-3 sm:gap-5 max-w-2xl my-2"
           >
             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-purple-500/60 to-purple-400/80" />
@@ -130,7 +66,7 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold tracking-[0.25em] text-purple-300/90 uppercase mb-10"
         >
           <a href="#academy" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
@@ -158,7 +94,7 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col sm:flex-row justify-center gap-5"
         >
           <Link
@@ -190,6 +126,7 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
 
 
