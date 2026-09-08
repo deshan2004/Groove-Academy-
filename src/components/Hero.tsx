@@ -19,21 +19,22 @@ const Hero = () => {
       {/* Main Container */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
         
-        {/* --- RIGA WORDMARK LOGO IMAGE + NATIVE HTML TYPOGRAPHY --- */}
+        {/* --- RIGA WORDMARK LOGO IMAGE (100% TRANSPARENT PNG) + NATIVE HTML TYPOGRAPHY --- */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="w-full max-w-4xl flex flex-col items-center mb-8 px-2"
         >
-          {/* High-Resolution 3D Metallic RIGA Wordmark Image - SEAMLESS BLEND */}
+          {/* High-Resolution 3D Metallic RIGA Wordmark - Pure Transparent PNG */}
           <div className="w-full relative py-2 mb-2 flex justify-center items-center pointer-events-none select-none">
             <img 
-              src="/images/riga-wordmark.png" 
+              src="/images/riga-transparent.png" 
               alt="RIGA" 
-              className="w-full max-w-2xl sm:max-w-3xl h-auto object-contain block mx-auto mix-blend-screen filter drop-shadow-[0_0_40px_rgba(168,85,247,0.65)] [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)]"
+              className="w-full max-w-2xl sm:max-w-3xl h-auto object-contain block mx-auto filter drop-shadow-[0_0_40px_rgba(168,85,247,0.7)]"
             />
           </div>
+
 
           {/* DANCE ACADEMY TEXT - GUARANTEED NON-WRAPPING */}
           <motion.div 
