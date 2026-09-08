@@ -2,12 +2,14 @@
 
 import { motion } from "framer-motion";
 import { Star, Trophy, Users, Heart, GraduationCap, Users2, Building2, Clapperboard, Calendar } from "lucide-react";
+import Link from "next/link";
 
 const categories = [
   {
     id: "academy",
     name: "ACADEMY",
     tagline: "Elite Dance Education",
+    href: "/classes",
     icon: <GraduationCap className="w-6 h-6 text-fuchsia-400" />,
     description: "Structured curriculum for all skill levels from beginner to master."
   },
@@ -15,6 +17,7 @@ const categories = [
     id: "crew",
     name: "CREW",
     tagline: "Pro Performance Team",
+    href: "/crew",
     icon: <Users2 className="w-6 h-6 text-purple-400" />,
     description: "Award-winning competition & showcase performance dancers."
   },
@@ -22,6 +25,7 @@ const categories = [
     id: "rentals",
     name: "RENTALS",
     tagline: "Costumes, Props & Studio Spaces",
+    href: "/rentals",
     icon: <Building2 className="w-6 h-6 text-fuchsia-400" />,
     description: "Stage costumes, theatrical props, accessories & studio spaces for rent."
   },
@@ -29,6 +33,7 @@ const categories = [
     id: "productions",
     name: "PRODUCTIONS",
     tagline: "Choreography & Media",
+    href: "/productions",
     icon: <Clapperboard className="w-6 h-6 text-purple-400" />,
     description: "Film, commercial, and stage performance production services."
   },
@@ -36,6 +41,7 @@ const categories = [
     id: "events",
     name: "EVENTS",
     tagline: "Live Shows & Workshops",
+    href: "/events",
     icon: <Calendar className="w-6 h-6 text-fuchsia-400" />,
     description: "Exclusive masterclasses, dance battles, and live concerts."
   }
@@ -84,30 +90,31 @@ export default function FeaturesSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {categories.map((cat, idx) => (
-              <motion.div
-                key={cat.name}
-                id={cat.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.08 }}
-                className="group relative p-6 rounded-2xl bg-[#140924]/80 border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] transition-all duration-300 backdrop-blur-md flex flex-col justify-between scroll-mt-28"
-              >
-                <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
-                <div>
-                  <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-purple-500/60 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-                    {cat.icon}
+              <Link key={cat.name} href={cat.href} className="block">
+                <motion.div
+                  id={cat.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08 }}
+                  className="group relative p-6 rounded-2xl bg-[#140924]/80 border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] transition-all duration-300 backdrop-blur-md flex flex-col justify-between h-full scroll-mt-28 cursor-pointer"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
+                  <div>
+                    <div className="w-12 h-12 rounded-xl bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:border-purple-500/60 transition-all shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                      {cat.icon}
+                    </div>
+                    <h4 className="text-lg font-black tracking-wider text-purple-100 group-hover:text-fuchsia-300 transition-colors uppercase">
+                      {cat.name}
+                    </h4>
+                    <p className="text-xs text-purple-300/60 font-semibold mb-2">{cat.tagline}</p>
+                    <p className="text-xs text-purple-200/70 leading-relaxed font-light">{cat.description}</p>
                   </div>
-                  <h4 className="text-lg font-black tracking-wider text-purple-100 group-hover:text-fuchsia-300 transition-colors uppercase">
-                    {cat.name}
-                  </h4>
-                  <p className="text-xs text-purple-300/60 font-semibold mb-2">{cat.tagline}</p>
-                  <p className="text-xs text-purple-200/70 leading-relaxed font-light">{cat.description}</p>
-                </div>
-                <div className="mt-4 pt-3 border-t border-purple-950 flex items-center text-[10px] uppercase font-bold tracking-widest text-purple-400 group-hover:text-fuchsia-300">
-                  Explore Division &rarr;
-                </div>
-              </motion.div>
+                  <div className="mt-4 pt-3 border-t border-purple-950 flex items-center text-[10px] uppercase font-bold tracking-widest text-purple-400 group-hover:text-fuchsia-300">
+                    Explore Division &rarr;
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>

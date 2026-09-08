@@ -71,25 +71,25 @@ const Hero = () => {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold tracking-[0.25em] text-purple-300/90 uppercase mb-10"
         >
-          <a href="#academy" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
+          <Link href="/classes" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
             ACADEMY
-          </a>
+          </Link>
           <span className="text-purple-600/60 font-light">|</span>
-          <a href="#crew" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
+          <Link href="/crew" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
             CREW
-          </a>
+          </Link>
           <span className="text-purple-600/60 font-light">|</span>
-          <a href="#rentals" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
+          <Link href="/rentals" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
             RENTALS
-          </a>
+          </Link>
           <span className="text-purple-600/60 font-light">|</span>
-          <a href="#productions" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
+          <Link href="/productions" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
             PRODUCTIONS
-          </a>
+          </Link>
           <span className="text-purple-600/60 font-light">|</span>
-          <a href="#events" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
+          <Link href="/events" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_12px_rgba(232,121,249,0.9)] transition-all">
             EVENTS
-          </a>
+          </Link>
         </motion.div>
 
         {/* --- ACTION BUTTONS --- */}
