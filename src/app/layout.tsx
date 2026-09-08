@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     description: "Sri Lanka's next generation of professional dancers starts at RIGA.",
     images: ["/images/riga-transparent.png"],
   },
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
 };
 
 
