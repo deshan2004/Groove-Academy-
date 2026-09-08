@@ -11,7 +11,6 @@ import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -28,24 +27,20 @@ export default function Home() {
           console.error("Error fetching user role:", error);
         }
       }
-      setUser(currentUser);
       setLoading(false);
     });
     return () => unsubscribe();
   }, [router]);
 
-  if (loading) return <div className="bg-academy-black min-h-screen"></div>;
+  if (loading) return <div className="bg-[#090410] min-h-screen"></div>;
 
   return (
-    <div className="bg-academy-black text-academy-white">
+    <div className="bg-[#090410] text-[#f8f5ff] min-h-screen">
       <Hero />
-      {user && (
-        <>
-          <FeaturesSection />
-          <FeaturedClassesPreview />
-          <CtaBanner />
-        </>
-      )}
+      <FeaturesSection />
+      <FeaturedClassesPreview />
+      <CtaBanner />
     </div>
   );
 }
+
