@@ -21,9 +21,9 @@ const categories = [
   {
     id: "rentals",
     name: "RENTALS",
-    tagline: "Studio & Rehearsal Spaces",
+    tagline: "Costumes, Props & Studio Spaces",
     icon: <Building2 className="w-6 h-6 text-fuchsia-400" />,
-    description: "State-of-the-art acoustic dance floors & lighting for rent."
+    description: "Stage costumes, theatrical props, accessories & studio spaces for rent."
   },
   {
     id: "productions",

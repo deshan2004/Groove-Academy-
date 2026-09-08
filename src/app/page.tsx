@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Hero from "@/components/Hero";
 import FeaturesSection from "@/components/FeaturesSection";
 import FeaturedClassesPreview from "@/components/FeaturedClassesPreview";
+import RentalsSection from "@/components/RentalsSection";
 import CtaBanner from "@/components/CtaBanner";
 import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -39,6 +40,7 @@ export default function Home() {
       <Hero />
       <FeaturesSection />
       <FeaturedClassesPreview />
+      <RentalsSection />
       <CtaBanner />
     </div>
   );

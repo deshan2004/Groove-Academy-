@@ -124,7 +124,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="text-white font-medium mb-1">Email Address</h3>
-                    <p className="text-gray-400">info@grooveacademy.lk<br />support@grooveacademy.lk</p>
+                    <p className="text-gray-400">info@rigadance.com<br />support@rigadance.com</p>
                   </div>
                 </div>
 
