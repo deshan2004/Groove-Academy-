@@ -60,14 +60,19 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-academy-black/90 backdrop-blur-md py-4 shadow-lg shadow-black/50" : "bg-transparent py-6"
+        scrolled
+          ? "bg-[#090410]/90 backdrop-blur-xl py-4 border-b border-purple-900/40 shadow-[0_10px_30px_rgba(9,4,16,0.9)]"
+          : "bg-transparent py-6"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold tracking-tighter text-academy-white">
-              Step<span className="text-academy-gold">Up</span>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 via-fuchsia-600 to-purple-400 flex items-center justify-center font-black text-white text-lg shadow-[0_0_15px_rgba(168,85,247,0.5)] group-hover:scale-105 transition-transform">
+              R
+            </div>
+            <span className="text-2xl font-extrabold tracking-widest text-metallic-purple uppercase">
+              RIGA <span className="text-purple-400 font-light text-sm tracking-normal block -mt-1 opacity-90">Dance Academy</span>
             </span>
           </Link>
 
@@ -77,7 +82,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-gray-300 hover:text-academy-gold transition-colors font-medium text-sm tracking-wide uppercase"
+                className="text-purple-200/80 hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all font-medium text-xs tracking-widest uppercase"
               >
                 {link.name}
               </Link>
@@ -91,22 +96,22 @@ const Navbar = () => {
               >
                 <Link
                   href={isAdmin ? "/admin" : "/dashboard"}
-                  className="flex items-center gap-2 text-academy-gold border border-academy-gold hover:bg-academy-gold hover:text-black px-6 py-2 rounded-full font-medium transition-all"
+                  className="flex items-center gap-2 text-purple-300 border border-purple-500/50 hover:bg-purple-600 hover:text-white px-6 py-2 rounded-full font-semibold text-xs tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(168,85,247,0.25)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]"
                 >
-                  <User className="w-4 h-4" />
+                  <User className="w-4 h-4 text-fuchsia-400" />
                   {isAdmin ? "Admin" : "Account"}
                 </Link>
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-academy-gray border border-gray-800 rounded-xl shadow-2xl py-2 flex flex-col z-50 overflow-hidden">
-                    <span className="px-4 py-3 text-xs text-gray-400 border-b border-gray-800 truncate">
+                  <div className="absolute right-0 mt-2 w-52 bg-[#140924] border border-purple-500/30 rounded-2xl shadow-[0_0_30px_rgba(9,4,16,0.9)] py-2 flex flex-col z-50 overflow-hidden backdrop-blur-xl">
+                    <span className="px-4 py-3 text-xs text-purple-300/70 border-b border-purple-900/40 truncate">
                       {currentUser.email}
                     </span>
-                    <Link href={isAdmin ? "/admin" : "/dashboard"} className="px-4 py-3 text-sm text-gray-300 hover:bg-academy-gold/10 hover:text-academy-gold transition-colors border-b border-gray-800">
+                    <Link href={isAdmin ? "/admin" : "/dashboard"} className="px-4 py-3 text-sm text-purple-100 hover:bg-purple-600/20 hover:text-fuchsia-300 transition-colors border-b border-purple-900/40">
                       {isAdmin ? "Admin Dashboard" : "My Dashboard"}
                     </Link>
                     <button
                       onClick={() => auth.signOut()}
-                      className="px-4 py-3 text-sm text-red-400 hover:bg-red-900/30 text-left transition-colors"
+                      className="px-4 py-3 text-sm text-red-400 hover:bg-red-950/30 text-left transition-colors"
                     >
                       Sign Out
                     </button>
@@ -116,7 +121,7 @@ const Navbar = () => {
             ) : (
               <Link
                 href="/login"
-                className="bg-academy-red hover:bg-red-700 text-white px-6 py-2 rounded-full font-medium transition-all shadow-[0_0_15px_rgba(198,40,40,0.5)] hover:shadow-[0_0_25px_rgba(198,40,40,0.8)]"
+                className="bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-500 hover:to-fuchsia-500 text-white px-6 py-2 rounded-full font-bold text-xs tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(232,121,249,0.7)] border border-fuchsia-400/30"
               >
                 Login
               </Link>
@@ -127,7 +132,7 @@ const Navbar = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-300 hover:text-white focus:outline-none"
+              className="text-purple-300 hover:text-white focus:outline-none"
             >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -141,33 +146,33 @@ const Navbar = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="md:hidden bg-academy-gray border-t border-gray-800"
+          className="md:hidden bg-[#140924] border-t border-purple-900/50 backdrop-blur-xl"
         >
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col">
+          <div className="px-4 pt-3 pb-5 space-y-1 flex flex-col">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="text-gray-300 hover:text-academy-gold block px-3 py-4 text-base font-medium border-b border-gray-800"
+                className="text-purple-200/90 hover:text-fuchsia-400 block px-3 py-3.5 text-base font-medium border-b border-purple-900/30 uppercase tracking-wider text-xs"
               >
                 {link.name}
               </Link>
             ))}
-            <div className="pt-4 pb-2 px-3 border-t border-gray-800 mt-2">
+            <div className="pt-4 pb-2 px-1 border-t border-purple-900/40 mt-2">
               {currentUser ? (
                 <div className="space-y-3">
-                  <div className="px-3 py-2 text-sm text-gray-400">
+                  <div className="px-3 py-2 text-xs text-purple-300/70">
                     Logged in as: <br/>
-                    <span className="text-white font-medium">{currentUser.email}</span>
+                    <span className="text-purple-100 font-medium text-sm">{currentUser.email}</span>
                   </div>
                   
                   <Link
                     href={isAdmin ? "/admin" : "/dashboard"}
                     onClick={() => setIsOpen(false)}
-                    className="w-full flex justify-center items-center gap-2 border border-academy-gold text-academy-gold hover:bg-academy-gold hover:text-black px-6 py-3 rounded-full font-medium transition-all"
+                    className="w-full flex justify-center items-center gap-2 border border-purple-500/50 text-purple-200 hover:bg-purple-600 hover:text-white px-6 py-3 rounded-full font-medium transition-all text-sm uppercase tracking-wider"
                   >
-                    <User className="w-5 h-5" />
+                    <User className="w-4 h-4 text-fuchsia-400" />
                     {isAdmin ? "Admin Dashboard" : "My Dashboard"}
                   </Link>
                   
@@ -176,7 +181,7 @@ const Navbar = () => {
                       auth.signOut();
                       setIsOpen(false);
                     }}
-                    className="w-full flex justify-center text-red-400 hover:text-red-300 hover:bg-red-900/20 px-6 py-3 rounded-full font-medium transition-all"
+                    className="w-full flex justify-center text-red-400 hover:text-red-300 hover:bg-red-950/20 px-6 py-3 rounded-full font-medium transition-all text-sm uppercase tracking-wider"
                   >
                     Sign Out
                   </button>
@@ -185,7 +190,7 @@ const Navbar = () => {
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="w-full flex justify-center bg-academy-red hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium transition-all"
+                  className="w-full flex justify-center bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-700 hover:from-purple-500 hover:to-fuchsia-500 text-white px-6 py-3 rounded-full font-bold text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(168,85,247,0.5)]"
                 >
                   Login
                 </Link>
@@ -199,3 +204,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

@@ -3,24 +3,27 @@ import { Camera, MapPin, Mail, Phone, Music2 } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-academy-black border-t border-gray-800 pt-20 pb-10">
+    <footer className="bg-[#090410] border-t border-purple-900/40 pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand Col */}
           <div className="space-y-6">
-            <Link href="/" className="inline-block">
-              <span className="text-3xl font-bold tracking-tighter text-academy-white">
-                Step<span className="text-academy-gold">Up</span>
+            <Link href="/" className="inline-flex items-center gap-2 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 via-fuchsia-600 to-purple-400 flex items-center justify-center font-black text-white text-lg shadow-[0_0_15px_rgba(168,85,247,0.5)] group-hover:scale-105 transition-transform">
+                R
+              </div>
+              <span className="text-2xl font-extrabold tracking-widest text-metallic-purple uppercase">
+                RIGA <span className="text-purple-400 font-light text-sm tracking-normal block -mt-1 opacity-90">Dance Academy</span>
               </span>
             </Link>
-            <p className="text-gray-400">
+            <p className="text-purple-200/60 text-sm leading-relaxed">
               Where passion meets movement. Join the most prestigious dance academy and transform your rhythm into art.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-academy-gray flex items-center justify-center text-gray-400 hover:text-academy-gold hover:bg-gray-800 transition-all">
+              <a href="#" className="w-10 h-10 rounded-full bg-[#140924] border border-purple-900/50 flex items-center justify-center text-purple-300 hover:text-fuchsia-300 hover:border-purple-500/70 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all">
                 <Camera className="w-5 h-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-academy-gray flex items-center justify-center text-gray-400 hover:text-academy-gold hover:bg-gray-800 transition-all">
+              <a href="#" className="w-10 h-10 rounded-full bg-[#140924] border border-purple-900/50 flex items-center justify-center text-purple-300 hover:text-fuchsia-300 hover:border-purple-500/70 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] transition-all">
                 <Music2 className="w-5 h-5" />
               </a>
             </div>
@@ -28,63 +31,66 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-bold text-lg mb-6">Quick Links</h4>
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-widest mb-6 text-purple-300">Quick Links</h4>
             <ul className="space-y-4">
               <li>
-                <Link href="/" className="text-gray-400 hover:text-academy-gold transition-colors">Home</Link>
+                <Link href="/" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Home</Link>
               </li>
               <li>
-                <Link href="/classes" className="text-gray-400 hover:text-academy-gold transition-colors">Classes</Link>
+                <Link href="/classes" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Classes</Link>
               </li>
               <li>
-                <Link href="/enroll" className="text-gray-400 hover:text-academy-gold transition-colors">Enroll</Link>
+                <Link href="/enroll" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Enroll</Link>
+              </li>
+              <li>
+                <Link href="/events" className="text-purple-200/70 hover:text-fuchsia-300 transition-colors text-sm">Events</Link>
               </li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="text-white font-bold text-lg mb-6">Contact Us</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start space-x-3 text-gray-400">
-                <MapPin className="w-5 h-5 text-academy-gold flex-shrink-0 mt-1" />
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-widest mb-6 text-purple-300">Contact Us</h4>
+            <ul className="space-y-4 text-sm">
+              <li className="flex items-start space-x-3 text-purple-200/70">
+                <MapPin className="w-5 h-5 text-fuchsia-400 flex-shrink-0 mt-0.5" />
                 <span>123 Rhythm Avenue, Dance District, NY 10001</span>
               </li>
-              <li className="flex items-center space-x-3 text-gray-400">
-                <Phone className="w-5 h-5 text-academy-gold flex-shrink-0" />
+              <li className="flex items-center space-x-3 text-purple-200/70">
+                <Phone className="w-5 h-5 text-fuchsia-400 flex-shrink-0" />
                 <span>+1 (555) 123-4567</span>
               </li>
-              <li className="flex items-center space-x-3 text-gray-400">
-                <Mail className="w-5 h-5 text-academy-gold flex-shrink-0" />
-                <span>hello@stepupacademy.com</span>
+              <li className="flex items-center space-x-3 text-purple-200/70">
+                <Mail className="w-5 h-5 text-fuchsia-400 flex-shrink-0" />
+                <span>hello@rigadance.com</span>
               </li>
             </ul>
           </div>
 
-          {/* Map Placeholder */}
+          {/* Map Location */}
           <div>
-            <h4 className="text-white font-bold text-lg mb-6">Location</h4>
-            <div className="w-full h-40 bg-academy-gray rounded-xl border border-gray-800 overflow-hidden relative group">
-              <div className="absolute inset-0 bg-academy-gold/10 group-hover:bg-transparent transition-colors z-10" />
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-widest mb-6 text-purple-300">Location</h4>
+            <div className="w-full h-40 bg-[#140924] rounded-2xl border border-purple-900/50 overflow-hidden relative group">
+              <div className="absolute inset-0 bg-purple-950/30 group-hover:bg-transparent transition-colors z-10" />
               <img 
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
                 alt="Map Location" 
-                className="w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity"
+                className="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity"
               />
               <div className="absolute inset-0 flex items-center justify-center z-20">
-                <MapPin className="w-8 h-8 text-academy-gold animate-bounce" />
+                <MapPin className="w-8 h-8 text-fuchsia-400 animate-bounce drop-shadow-[0_0_10px_rgba(232,121,249,0.8)]" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} StepUp Dance Academy. All rights reserved.
+        <div className="border-t border-purple-900/40 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-purple-300/50 text-xs">
+            © {new Date().getFullYear()} RIGA Dance Academy. All rights reserved.
           </p>
-          <div className="flex space-x-6 mt-4 md:mt-0 text-sm">
-            <Link href="#" className="text-gray-500 hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="text-gray-500 hover:text-white transition-colors">Terms of Service</Link>
+          <div className="flex space-x-6 mt-4 md:mt-0 text-xs">
+            <Link href="#" className="text-purple-300/50 hover:text-purple-200 transition-colors">Privacy Policy</Link>
+            <Link href="#" className="text-purple-300/50 hover:text-purple-200 transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
@@ -93,3 +99,4 @@ const Footer = () => {
 };
 
 export default Footer;
+
