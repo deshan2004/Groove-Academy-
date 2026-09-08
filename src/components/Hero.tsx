@@ -6,9 +6,9 @@ import { ArrowRight, Sparkles } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section id="home" className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-[#07020e] text-white pt-20 pb-16">
+    <section id="home" className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden bg-[#07020e] text-white pt-24 pb-16">
       
-      {/* Background Ambient Lights */}
+      {/* Background Ambient Lights & Atmospheric Smoke */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-24 -left-24 w-[600px] h-[600px] bg-purple-900/30 rounded-full blur-[150px] mix-blend-screen animate-pulse" />
         <div className="absolute top-1/3 -right-24 w-[600px] h-[600px] bg-fuchsia-900/25 rounded-full blur-[160px] mix-blend-screen" />
@@ -19,46 +19,22 @@ const Hero = () => {
       {/* Main Container */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
         
-        {/* --- PIXEL-PERFECT ORIGINAL RIGA LOGO BANNER IMAGE --- */}
+        {/* --- EXACT CROPPED RIGA LOGO GRAPHIC ONLY --- */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full relative flex flex-col items-center mb-6 group"
+          className="w-full relative flex flex-col items-center mb-8 group"
         >
-          {/* Main Logo Card Image with Subtle Glow Overlay */}
-          <div className="relative w-full max-w-4xl rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.35)] border border-purple-500/20 bg-[#07020e]">
+          {/* Main Logo Graphic (RIGA DANCE ACADEMY - DANCE BEYOND LIMITS) */}
+          <div className="relative w-full max-w-3xl rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(168,85,247,0.4)] border border-purple-500/20 bg-[#07020e]">
             <img 
-              src="/images/riga-banner.jpg" 
+              src="/images/riga-logo-only.png" 
               alt="RIGA Dance Academy - Dance Beyond Limits" 
               className="w-full h-auto object-contain block mx-auto transition-transform duration-700 group-hover:scale-[1.01]"
             />
-            
-            {/* Seamless Vignette Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#07020e] via-transparent to-transparent opacity-40 pointer-events-none" />
-          </div>
-
-          {/* Interactive Division Navigation Bar (ACADEMY | CREW | RENTALS | PRODUCTIONS | EVENTS) */}
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm font-semibold tracking-[0.25em] text-purple-200/80 uppercase mt-6 mb-2">
-            <a href="#academy" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all">
-              ACADEMY
-            </a>
-            <span className="text-purple-600/60 font-light">|</span>
-            <a href="#crew" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all">
-              CREW
-            </a>
-            <span className="text-purple-600/60 font-light">|</span>
-            <a href="#rentals" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all">
-              RENTALS
-            </a>
-            <span className="text-purple-600/60 font-light">|</span>
-            <a href="#productions" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all">
-              PRODUCTIONS
-            </a>
-            <span className="text-purple-600/60 font-light">|</span>
-            <a href="#events" className="hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all">
-              EVENTS
-            </a>
+            {/* Soft Ambient Blend Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#07020e]/60 via-transparent to-[#07020e]/40 opacity-30 pointer-events-none" />
           </div>
         </motion.div>
 
@@ -66,7 +42,7 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
           className="flex flex-col sm:flex-row justify-center gap-5 mt-2"
         >
           <Link
@@ -92,6 +68,7 @@ const Hero = () => {
 };
 
 export default Hero;
+
 
 
 
