@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, AlertCircle, UserPlus, Sparkles, Send, GraduationCap } from "lucide-react";
+import { CheckCircle, AlertCircle, UserPlus, Sparkles, Send, Upload, CreditCard, Building, ShieldCheck, FileText } from "lucide-react";
 
 export default function EnrollmentSection() {
   const [formData, setFormData] = useState({
@@ -15,9 +15,12 @@ export default function EnrollmentSection() {
     preferred_style: "Kandyan Traditional",
     skill_level: "Beginner",
     preferred_branch: "Colombo Main Studio - Weekend Morning",
+    transaction_ref: "",
     notes: "",
   });
   const [countryCode, setCountryCode] = useState("+94");
+  const [paymentSlip, setPaymentSlip] = useState<string>("");
+  const [paymentSlipName, setPaymentSlipName] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({
     type: null,
@@ -28,10 +31,31 @@ export default function EnrollmentSection() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPaymentSlipName(file.name);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPaymentSlip(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setStatus({ type: null, message: "" });
+
+    if (!paymentSlip && !formData.transaction_ref) {
+      setStatus({
+        type: "error",
+        message: "Please upload your bank payment slip or enter the payment transaction reference number to proceed.",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch("/api/enroll", {
@@ -41,6 +65,9 @@ export default function EnrollmentSection() {
           ...formData,
           phone: `${countryCode} ${formData.phone}`,
           age: parseInt(formData.age) || 0,
+          payment_slip: paymentSlip,
+          payment_slip_name: paymentSlipName,
+          status: "pending_approval",
         }),
       });
 
@@ -48,7 +75,7 @@ export default function EnrollmentSection() {
       if (res.ok && data.success) {
         setStatus({
           type: "success",
-          message: "Registration submitted successfully! Our admissions coordinator will contact you via Phone/Email with your orientation schedule.",
+          message: "Registration & Payment Slip submitted! Your application is pending Admin approval. Upon verification, your login password will be dispatched to your phone/email.",
         });
         setFormData({
           student_name: "",
@@ -60,8 +87,11 @@ export default function EnrollmentSection() {
           preferred_style: "Kandyan Traditional",
           skill_level: "Beginner",
           preferred_branch: "Colombo Main Studio - Weekend Morning",
+          transaction_ref: "",
           notes: "",
         });
+        setPaymentSlip("");
+        setPaymentSlipName("");
       } else {
         setStatus({
           type: "error",
@@ -93,7 +123,7 @@ export default function EnrollmentSection() {
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/80 border border-purple-800/50 text-fuchsia-300 text-xs font-bold uppercase tracking-widest mb-4 shadow-[0_0_15px_rgba(168,85,247,0.25)]"
           >
             <UserPlus className="w-4 h-4 text-fuchsia-400" />
-            New Student Registration Form
+            New Student Registration & Payment Slip
           </motion.div>
 
           <motion.h1
@@ -102,7 +132,7 @@ export default function EnrollmentSection() {
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-5xl font-black uppercase text-white tracking-wide mb-4"
           >
-            New Student <span className="text-metallic-purple">Enrollment</span>
+            New Student <span className="text-metallic-purple">Enrollment & Slip</span>
           </motion.h1>
 
           <motion.p
@@ -111,8 +141,34 @@ export default function EnrollmentSection() {
             transition={{ delay: 0.15 }}
             className="text-purple-200/70 max-w-2xl mx-auto text-base sm:text-lg font-light leading-relaxed"
           >
-            Register as an official student at RIGA Dance Academy. Fill out the registration form below to reserve your slot.
+            Deposit admission fees to RIGA official bank account, attach your payment slip below, and complete registration for Admin approval.
           </motion.p>
+        </div>
+
+        {/* BANK DETAILS SHOWCASE CARD */}
+        <div className="mb-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#180930] via-[#210c42] to-[#180930] border border-purple-800/60 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
+          <div className="flex items-center gap-3 mb-4 text-fuchsia-300 font-extrabold text-sm uppercase tracking-wider">
+            <Building className="w-5 h-5 text-fuchsia-400" />
+            Official RIGA Bank Transfer Details
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div className="bg-[#090410]/80 p-3.5 rounded-xl border border-purple-900/40">
+              <span className="text-purple-400/60 block uppercase font-semibold text-[10px] mb-1">Bank Name</span>
+              <span className="text-white font-bold text-sm">Commercial Bank</span>
+            </div>
+            <div className="bg-[#090410]/80 p-3.5 rounded-xl border border-purple-900/40">
+              <span className="text-purple-400/60 block uppercase font-semibold text-[10px] mb-1">Account Name</span>
+              <span className="text-white font-bold text-sm">RIGA Dance Academy</span>
+            </div>
+            <div className="bg-[#090410]/80 p-3.5 rounded-xl border border-purple-900/40">
+              <span className="text-purple-400/60 block uppercase font-semibold text-[10px] mb-1">Account Number</span>
+              <span className="text-fuchsia-300 font-black text-sm tracking-wider">8002 9384 1029</span>
+            </div>
+            <div className="bg-[#090410]/80 p-3.5 rounded-xl border border-purple-900/40">
+              <span className="text-purple-400/60 block uppercase font-semibold text-[10px] mb-1">Branch</span>
+              <span className="text-white font-bold text-sm">Colombo Main</span>
+            </div>
+          </div>
         </div>
 
         {/* Form Container */}
@@ -247,7 +303,7 @@ export default function EnrollmentSection() {
               </div>
             </div>
 
-            {/* Row 4: Dance Style & Skill Level */}
+            {/* Row 4: Dance Style & Studio Batch */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-purple-300/90 mb-2">
@@ -273,54 +329,86 @@ export default function EnrollmentSection() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-purple-300/90 mb-2">
-                  Experience Level *
+                  Studio Branch & Batch *
                 </label>
                 <select
-                  name="skill_level"
+                  name="preferred_branch"
                   required
-                  value={formData.skill_level}
+                  value={formData.preferred_branch}
                   onChange={handleChange}
                   className="w-full bg-[#090410] border border-purple-900/60 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/90 focus:ring-1 focus:ring-purple-500/50 transition-all"
                 >
-                  <option value="Beginner">Beginner (No prior experience)</option>
-                  <option value="Intermediate">Intermediate (1-2 years experience)</option>
-                  <option value="Advanced">Advanced (3+ years experience)</option>
-                  <option value="Pro Troupe">Pro Troupe Candidate</option>
+                  <option value="Colombo Main Studio - Weekend Morning">Colombo Main Studio - Weekend Morning</option>
+                  <option value="Colombo Main Studio - Weekday Evening">Colombo Main Studio - Weekday Evening</option>
+                  <option value="Kandy Regional Studio - Weekend">Kandy Regional Studio - Weekend</option>
+                  <option value="Online Virtual Masterclass">Online Virtual Masterclass</option>
                 </select>
               </div>
             </div>
 
-            {/* Row 5: Studio Branch / Schedule */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-purple-300/90 mb-2">
-                Preferred Studio Branch & Batch *
-              </label>
-              <select
-                name="preferred_branch"
-                required
-                value={formData.preferred_branch}
-                onChange={handleChange}
-                className="w-full bg-[#090410] border border-purple-900/60 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/90 focus:ring-1 focus:ring-purple-500/50 transition-all"
-              >
-                <option value="Colombo Main Studio - Weekend Morning">Colombo Main Studio - Weekend Morning Batch</option>
-                <option value="Colombo Main Studio - Weekday Evening">Colombo Main Studio - Weekday Evening Batch</option>
-                <option value="Kandy Regional Studio - Weekend">Kandy Regional Studio - Weekend Batch</option>
-                <option value="Online Virtual Masterclass">Online Virtual Masterclass</option>
-              </select>
+            {/* PAYMENT SLIP UPLOAD & TRANSACTION REFERENCE */}
+            <div className="p-6 rounded-2xl bg-[#090410]/90 border border-purple-800/60 space-y-4">
+              <div className="flex items-center gap-2 text-fuchsia-300 font-bold text-xs uppercase tracking-wider">
+                <CreditCard className="w-4 h-4 text-fuchsia-400" />
+                Bank Payment Verification & Slip Upload *
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* File Upload */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-purple-200/80 mb-2">
+                    Upload Bank Transfer Slip (Image/PDF)
+                  </label>
+                  <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-purple-800/60 rounded-xl cursor-pointer hover:border-purple-500/80 hover:bg-purple-950/30 transition-all text-center">
+                    <Upload className="w-6 h-6 text-fuchsia-400 mb-2" />
+                    <span className="text-xs text-purple-200/90 font-medium">
+                      {paymentSlipName ? paymentSlipName : "Click to Upload Slip Image"}
+                    </span>
+                    <span className="text-[10px] text-purple-400/50 mt-1">PNG, JPG, JPEG, PDF up to 5MB</span>
+                    <input type="file" accept="image/*,.pdf" onChange={handleFileUpload} className="hidden" />
+                  </label>
+                </div>
+
+                {/* Transaction Ref Number */}
+                <div>
+                  <label className="block text-[11px] font-semibold text-purple-200/80 mb-2">
+                    Bank Reference / Transaction ID Number
+                  </label>
+                  <input
+                    type="text"
+                    name="transaction_ref"
+                    value={formData.transaction_ref}
+                    onChange={handleChange}
+                    className="w-full bg-[#140924] border border-purple-900/60 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/90 placeholder:text-purple-400/40"
+                    placeholder="e.g. REF-98341029"
+                  />
+                  <p className="text-[10px] text-purple-300/60 mt-2 leading-relaxed">
+                    Provide your bank deposit reference number or upload slip image above for fast Admin approval.
+                  </p>
+                </div>
+              </div>
+
+              {paymentSlip && (
+                <div className="mt-3 p-3 bg-purple-950/60 rounded-xl border border-purple-700/50 flex items-center gap-3">
+                  <FileText className="w-5 h-5 text-fuchsia-400" />
+                  <span className="text-xs text-purple-200 truncate font-mono">{paymentSlipName} Attached</span>
+                  <span className="text-[10px] text-green-400 font-bold uppercase ml-auto">Ready</span>
+                </div>
+              )}
             </div>
 
             {/* Notes */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-purple-300/90 mb-2">
-                Additional Notes / Questions (Optional)
+                Additional Notes (Optional)
               </label>
               <textarea
                 name="notes"
-                rows={3}
+                rows={2}
                 value={formData.notes}
                 onChange={handleChange}
                 className="w-full bg-[#090410] border border-purple-900/60 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple-500/90 focus:ring-1 focus:ring-purple-500/50 transition-all placeholder:text-purple-400/40"
-                placeholder="Mention any prior dance background, health conditions, or questions..."
+                placeholder="Mention any prior dance background or questions..."
               />
             </div>
 
@@ -334,7 +422,7 @@ export default function EnrollmentSection() {
                 <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />
               ) : (
                 <>
-                  <span>Submit Registration Application</span>
+                  <span>Submit Registration & Payment Slip</span>
                   <Send className="w-4 h-4 text-fuchsia-300" />
                 </>
               )}

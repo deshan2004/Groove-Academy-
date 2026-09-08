@@ -5,7 +5,7 @@ import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Trash2, X, CheckCircle, Star } from "lucide-react";
+import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Trash2, X, CheckCircle, Star, FileText } from "lucide-react";
 import AttendanceTab from "@/components/admin/AttendanceTab";
 import EventsTab from "@/components/admin/EventsTab";
 
@@ -16,6 +16,7 @@ export default function AdminDashboard() {
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"enrollments" | "users" | "classes" | "inquiries" | "attendance" | "events">("enrollments");
   const [loading, setLoading] = useState(true);
+  const [selectedSlip, setSelectedSlip] = useState<any>(null);
   
   // Class Form State
   const [showClassModal, setShowClassModal] = useState(false);
@@ -322,8 +323,8 @@ export default function AdminDashboard() {
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Student</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Contact</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Location</th>
-                  <th className="px-6 py-4 font-medium border-b border-gray-800">Age</th>
-                  <th className="px-6 py-4 font-medium border-b border-gray-800">Style</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Style & Branch</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Payment Slip</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Status</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800 text-right">Actions</th>
                 </tr>
@@ -331,7 +332,7 @@ export default function AdminDashboard() {
               <tbody className="divide-y divide-gray-800">
                 {enrollments.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                       No enrollments found yet.
                     </td>
                   </tr>
@@ -340,28 +341,44 @@ export default function AdminDashboard() {
                     <tr key={student._id} className="hover:bg-black/20 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <div className="h-10 w-10 rounded-full bg-academy-black flex items-center justify-center text-academy-gold font-bold">
+                          <div className="h-10 w-10 rounded-full bg-purple-950 border border-purple-800 flex items-center justify-center text-fuchsia-400 font-bold">
                             {student.student_name.charAt(0)}
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-white">{student.student_name}</div>
+                            <div className="text-xs text-purple-300/60">{student.age} yrs</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-300 flex items-center gap-2 mb-1">
-                          <Mail className="w-4 h-4 text-gray-500" /> {student.email}
+                          <Mail className="w-4 h-4 text-purple-400" /> {student.email}
                         </div>
                         <div className="text-sm text-gray-300 flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-gray-500" /> {student.phone}
+                          <Phone className="w-4 h-4 text-purple-400" /> {student.phone}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-300">{student.location || "N/A"}</td>
-                      <td className="px-6 py-4 text-sm text-gray-300">{student.age} yrs</td>
                       <td className="px-6 py-4">
-                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-academy-gold/10 text-academy-gold border border-academy-gold/20">
+                        <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-950 text-fuchsia-300 border border-purple-800/60 mb-1">
                           {student.preferred_style}
                         </span>
+                        {student.preferred_branch && (
+                          <div className="text-[10px] text-purple-300/60">{student.preferred_branch}</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        {student.payment_slip || student.transaction_ref ? (
+                          <button
+                            onClick={() => setSelectedSlip(student)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-fuchsia-950/80 border border-fuchsia-700/60 text-fuchsia-300 hover:text-white text-xs font-bold transition-all shadow-[0_0_10px_rgba(232,121,249,0.2)]"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-fuchsia-400" />
+                            View Slip
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-500 italic">No Slip</span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${
@@ -369,21 +386,21 @@ export default function AdminDashboard() {
                           student.status === "rejected" ? "bg-red-900/30 text-red-400 border-red-500/30" :
                           "bg-yellow-900/30 text-yellow-400 border-yellow-500/30"
                         }`}>
-                          {(student.status || "pending").toUpperCase()}
+                          {(student.status || "pending_approval").toUpperCase().replace("_", " ")}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {(!student.status || student.status === "pending") && (
+                        {(!student.status || student.status === "pending" || student.status === "pending_approval") && (
                           <div className="flex justify-end gap-2">
                             <button
                               onClick={() => handleUpdateStatus(student._id, "approved")}
-                              className="text-xs bg-green-900/30 hover:bg-green-900/60 text-green-400 border border-green-500/30 px-3 py-1 rounded-md transition-colors"
+                              className="text-xs bg-green-900/40 hover:bg-green-800/80 text-green-300 border border-green-500/40 px-3 py-1.5 rounded-lg transition-colors font-bold shadow-[0_0_10px_rgba(34,197,94,0.2)]"
                             >
                               Approve
                             </button>
                             <button
                               onClick={() => handleUpdateStatus(student._id, "rejected")}
-                              className="text-xs bg-red-900/30 hover:bg-red-900/60 text-red-400 border border-red-500/30 px-3 py-1 rounded-md transition-colors"
+                              className="text-xs bg-red-900/40 hover:bg-red-800/80 text-red-300 border border-red-500/40 px-3 py-1.5 rounded-lg transition-colors font-bold"
                             >
                               Reject
                             </button>
@@ -705,6 +722,78 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Payment Slip Inspection Modal */}
+        {selectedSlip && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#140924] border border-purple-800/60 rounded-3xl w-full max-w-xl p-6 sm:p-8 relative shadow-[0_0_50px_rgba(168,85,247,0.3)] max-h-[90vh] overflow-y-auto"
+            >
+              <button
+                onClick={() => setSelectedSlip(null)}
+                className="absolute right-5 top-5 p-2 rounded-full bg-purple-950 text-purple-300 hover:text-white border border-purple-800/50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <h2 className="text-xl font-black text-white uppercase tracking-wider mb-1 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-fuchsia-400" />
+                Payment Slip Verification
+              </h2>
+              <p className="text-xs text-purple-300/70 mb-6">
+                Student: <span className="text-white font-bold">{selectedSlip.student_name}</span> ({selectedSlip.phone})
+              </p>
+
+              {/* Transaction Ref */}
+              {selectedSlip.transaction_ref && (
+                <div className="mb-4 p-3 bg-[#090410] rounded-xl border border-purple-900/60 flex items-center justify-between text-xs">
+                  <span className="text-purple-400/70 uppercase font-semibold">Transaction Reference ID:</span>
+                  <span className="text-fuchsia-300 font-mono font-bold text-sm">{selectedSlip.transaction_ref}</span>
+                </div>
+              )}
+
+              {/* Payment Slip Image Preview */}
+              {selectedSlip.payment_slip ? (
+                <div className="mb-6 rounded-2xl overflow-hidden border border-purple-800/60 bg-[#090410] max-h-96 flex items-center justify-center p-2">
+                  <img
+                    src={selectedSlip.payment_slip}
+                    alt="Payment Slip"
+                    className="max-h-80 w-auto object-contain rounded-xl"
+                  />
+                </div>
+              ) : (
+                <div className="mb-6 p-8 rounded-2xl bg-[#090410] text-center border border-purple-900/60 text-purple-300/60 text-xs">
+                  No image slip attached. Verify via Transaction Reference ID above.
+                </div>
+              )}
+
+              {/* Modal Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-purple-900/60">
+                <button
+                  type="button"
+                  onClick={() => setSelectedSlip(null)}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-purple-300/80 hover:text-white bg-purple-950/60 border border-purple-800/40"
+                >
+                  Close
+                </button>
+                {selectedSlip.status !== "approved" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleUpdateStatus(selectedSlip._id, "approved");
+                      setSelectedSlip(null);
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-black text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(34,197,94,0.4)]"
+                  >
+                    Approve Payment & Student
+                  </button>
+                )}
+              </div>
             </motion.div>
           </div>
         )}
