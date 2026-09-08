@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       try {
         await resend.emails.send({
           from: 'onboarding@resend.dev', // Use resend's default domain for testing
-          to: 'admin@stepupdanceacademy.com', // Replace with actual admin email
+          to: 'admin@rigadance.com', // Replace with actual admin email
           subject: 'New Contact Inquiry',
           html: `<p>You have a new inquiry from the website:</p><ul><li>Name: ${body.name}</li><li>Email: ${body.email}</li><li>Phone: ${body.phone}</li><li>Message: ${body.message}</li></ul>`
         });

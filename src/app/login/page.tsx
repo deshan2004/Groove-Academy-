@@ -38,7 +38,7 @@ export default function LoginPage() {
         }
       } else {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        userRole = email.toLowerCase() === "admin@stepup.com" ? "admin" : "user";
+        userRole = email.toLowerCase() === "admin@riga.com" ? "admin" : "user";
         
         // Save the new user to Firestore
         await setDoc(doc(db, "users", userCredential.user.uid), {

@@ -68,14 +68,14 @@ export async function POST(request: Request) {
         await resend.emails.send({
           from: 'onboarding@resend.dev', // Use resend's default domain for testing
           to: body.email,
-          subject: 'Welcome to StepUp Dance Academy!',
+          subject: 'Welcome to RIGA Dance Academy!',
           html: `<h1>Welcome ${body.student_name}!</h1><p>Thank you for enrolling in our <b>${body.preferred_style}</b> class. Your enrollment is currently pending approval. We will contact you soon!</p>`
         });
         
         // Notify admin
         await resend.emails.send({
           from: 'onboarding@resend.dev',
-          to: 'admin@stepupdanceacademy.com', // Replace with actual admin email
+          to: 'admin@rigadance.com', // Replace with actual admin email
           subject: 'New Student Enrollment',
           html: `<p>A new student has enrolled:</p><ul><li>Name: ${body.student_name}</li><li>Class: ${body.preferred_style}</li><li>Phone: ${body.phone}</li></ul>`
         });

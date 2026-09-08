@@ -5,21 +5,21 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "StepUp Dance Academy | Premium Dance Classes in Sri Lanka",
-  description: "Join StepUp Dance Academy, the most prestigious dance school. Master Kandyan, Hip-Hop, Classical, and Contemporary dance styles with expert instructors.",
-  keywords: ["Dance Academy", "Sri Lanka", "Kandyan Dance", "Hip Hop", "Contemporary Dance", "Dance Classes", "StepUp"],
-  authors: [{ name: "StepUp Dance Academy" }],
+  title: "RIGA - Sri Lanka's next generation of professional dancers starts at RIGA.",
+  description: "Sri Lanka's next generation of professional dancers starts at RIGA. Master Kandyan, Hip-Hop, Classical, and Contemporary dance styles with world-class instructors.",
+  keywords: ["RIGA", "RIGA Dance Academy", "Dance Academy Sri Lanka", "Kandyan Dance", "Hip Hop", "Contemporary Dance", "Dance Classes"],
+  authors: [{ name: "RIGA Dance Academy" }],
   openGraph: {
-    title: "StepUp Dance Academy",
-    description: "Join the most prestigious dance academy in Sri Lanka.",
-    url: "https://stepupdanceacademy.com",
-    siteName: "StepUp Dance Academy",
+    title: "RIGA - Sri Lanka's next generation of professional dancers starts at RIGA.",
+    description: "Sri Lanka's next generation of professional dancers starts at RIGA. Master Kandyan, Hip-Hop, Classical, and Contemporary dance styles with world-class instructors.",
+    url: "https://rigadance.com",
+    siteName: "RIGA Dance Academy",
     images: [
       {
-        url: "/icon.svg",
+        url: "/images/riga-transparent.png",
         width: 800,
         height: 600,
-        alt: "StepUp Dance Academy Logo",
+        alt: "RIGA Dance Academy Logo",
       },
     ],
     locale: "en_US",
@@ -27,11 +27,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "StepUp Dance Academy",
-    description: "Join the most prestigious dance academy in Sri Lanka.",
-    images: ["/icon.svg"],
+    title: "RIGA - Sri Lanka's next generation of professional dancers starts at RIGA.",
+    description: "Sri Lanka's next generation of professional dancers starts at RIGA.",
+    images: ["/images/riga-transparent.png"],
   },
 };
+
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";

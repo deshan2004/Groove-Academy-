@@ -60,7 +60,7 @@ export default function GalleryPage() {
             transition={{ delay: 0.3 }}
             className="mt-6 text-gray-400 max-w-2xl mx-auto text-lg"
           >
-            A glimpse into the passion, energy, and rhythm of StepUp Dance Academy.
+            A glimpse into the passion, energy, and rhythm of RIGA Dance Academy.
           </motion.p>
         </div>
 
