@@ -5,30 +5,35 @@ import { Star, Trophy, Users, Heart, GraduationCap, Users2, Building2, Clapperbo
 
 const categories = [
   {
+    id: "academy",
     name: "ACADEMY",
     tagline: "Elite Dance Education",
     icon: <GraduationCap className="w-6 h-6 text-fuchsia-400" />,
     description: "Structured curriculum for all skill levels from beginner to master."
   },
   {
+    id: "crew",
     name: "CREW",
     tagline: "Pro Performance Team",
     icon: <Users2 className="w-6 h-6 text-purple-400" />,
     description: "Award-winning competition & showcase performance dancers."
   },
   {
+    id: "rentals",
     name: "RENTALS",
     tagline: "Studio & Rehearsal Spaces",
     icon: <Building2 className="w-6 h-6 text-fuchsia-400" />,
     description: "State-of-the-art acoustic dance floors & lighting for rent."
   },
   {
+    id: "productions",
     name: "PRODUCTIONS",
     tagline: "Choreography & Media",
     icon: <Clapperboard className="w-6 h-6 text-purple-400" />,
     description: "Film, commercial, and stage performance production services."
   },
   {
+    id: "events",
     name: "EVENTS",
     tagline: "Live Shows & Workshops",
     icon: <Calendar className="w-6 h-6 text-fuchsia-400" />,
@@ -81,11 +86,12 @@ export default function FeaturesSection() {
             {categories.map((cat, idx) => (
               <motion.div
                 key={cat.name}
+                id={cat.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.08 }}
-                className="group relative p-6 rounded-2xl bg-[#140924]/80 border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] transition-all duration-300 backdrop-blur-md flex flex-col justify-between"
+                className="group relative p-6 rounded-2xl bg-[#140924]/80 border border-purple-900/40 hover:border-purple-500/70 hover:shadow-[0_0_25px_rgba(168,85,247,0.35)] transition-all duration-300 backdrop-blur-md flex flex-col justify-between scroll-mt-28"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
                 <div>
@@ -152,4 +158,5 @@ export default function FeaturesSection() {
     </section>
   );
 }
+
 
