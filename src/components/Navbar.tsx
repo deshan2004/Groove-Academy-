@@ -47,10 +47,8 @@ const Navbar = () => {
     };
   }, []);
 
-  // Hide top header navbar on Home page
-  if (pathname === "/") {
-    return null;
-  }
+  // Hide top header navbar completely across all pages
+  return null;
 
   const navLinks = [
     { name: "Home", href: "/" },

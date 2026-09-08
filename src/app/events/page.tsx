@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Clock, Star } from "lucide-react";
+import { Calendar, MapPin, Clock, Star, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -36,6 +37,19 @@ export default function EventsPage() {
       <section className="pt-32 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1547153760-18fc86324498?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-academy-black/50 via-academy-black to-academy-black"></div>
+        
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex justify-center mb-8">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-academy-gold/10 border border-academy-gold/20 text-academy-gold hover:text-white hover:border-academy-gold/50 transition-all text-sm font-semibold uppercase tracking-wider"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Home
+            </Link>
+          </div>
+        </div>
+
         <div className="max-w-7xl mx-auto relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -58,30 +59,41 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-academy-black pt-24 pb-20">
+    <div className="min-h-screen bg-[#090410] pt-12 pb-20 text-purple-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        {/* Back to Home Link */}
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 hover:text-white hover:border-purple-500/60 transition-all text-xs font-semibold uppercase tracking-wider shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+          >
+            <ArrowLeft className="w-4 h-4 text-fuchsia-400" />
+            Back to Home
+          </Link>
+        </div>
+
         {/* Header Section */}
         <div className="text-center mb-16">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-white mb-4"
+            className="text-4xl md:text-6xl font-black uppercase text-white tracking-wide mb-4"
           >
-            Get In <span className="text-academy-gold">Touch</span>
+            Get In <span className="text-metallic-purple">Touch</span>
           </motion.h1>
           <motion.div 
             initial={{ opacity: 0, width: 0 }}
             animate={{ opacity: 1, width: "100%" }}
-            className="h-1 w-24 bg-academy-red mx-auto rounded-full mb-6"
+            className="h-1 w-24 bg-gradient-to-r from-purple-500 to-fuchsia-500 mx-auto rounded-full mb-6 shadow-[0_0_12px_rgba(168,85,247,0.6)]"
           />
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-gray-400 text-lg max-w-2xl mx-auto"
+            className="text-purple-200/70 text-base sm:text-lg max-w-2xl mx-auto font-light"
           >
-            Have questions about our classes or want to learn more? We'd love to hear from you.
+            Have questions about our classes, rentals, or events? We'd love to hear from you.
           </motion.p>
         </div>
 
