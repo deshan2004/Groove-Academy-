@@ -1,31 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import EnrollmentSection from "@/components/EnrollmentSection";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function EnrollPage() {
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-      } else {
-        setLoading(false);
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
-
-  if (loading) return <div className="bg-academy-black min-h-screen"></div>;
-
   return (
-    <div className="pt-24 bg-academy-black min-h-screen">
+    <div className="min-h-screen bg-[#090410] text-white">
+      {/* Top Navigation Back Button */}
+      <div className="pt-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 hover:text-white hover:border-purple-500/60 transition-all text-xs font-semibold uppercase tracking-wider shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+        >
+          <ArrowLeft className="w-4 h-4 text-fuchsia-400" />
+          Back to Home
+        </Link>
+      </div>
+
       <EnrollmentSection />
+      <Footer />
     </div>
   );
 }
