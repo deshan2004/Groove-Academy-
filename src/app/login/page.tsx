@@ -1,7 +1,6 @@
 "use client";
 
 import EnrollmentSection from "@/components/EnrollmentSection";
-import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -20,7 +19,6 @@ export default function LoginPage() {
       </div>
 
       <EnrollmentSection initialMode="signin" />
-      <Footer />
     </div>
   );
 }

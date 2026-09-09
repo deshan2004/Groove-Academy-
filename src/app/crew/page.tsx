@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Users2, Trophy, Flame, Star, Sparkles, Video } from "lucide-react";
 import Link from "next/link";
-import Footer from "@/components/Footer";
 
 const crewMembers = [
   {
@@ -126,8 +125,6 @@ export default function CrewPage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }

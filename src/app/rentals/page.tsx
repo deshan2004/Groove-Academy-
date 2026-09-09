@@ -1,7 +1,6 @@
 "use client";
 
 import RentalsSection from "@/components/RentalsSection";
-import Footer from "@/components/Footer";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -20,7 +19,6 @@ export default function RentalsPage() {
       </div>
 
       <RentalsSection />
-      <Footer />
     </div>
   );
 }
