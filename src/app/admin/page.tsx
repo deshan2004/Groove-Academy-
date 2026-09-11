@@ -53,6 +53,7 @@ interface UserItem {
   lastName?: string;
   email?: string;
   role?: string;
+  status?: string;
   phone?: string;
   createdAt?: FirestoreTimestamp | string | number | null;
 }
@@ -183,9 +184,27 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (data.success) {
         setEnrollments(enrollments.map(e => e._id === id ? { ...e, status: newStatus } : e));
+        fetchUsers();
       }
     } catch (error) {
       console.error("Error updating status:", error);
+    }
+  };
+
+  const handleUpdateUserStatus = async (userId: string, newStatus: string) => {
+    try {
+      const res = await fetch(`/api/users/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRegisteredUsers(registeredUsers.map(u => (u.uid === userId || u._id === userId) ? { ...u, status: newStatus } : u));
+        fetchEnrollments();
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
     }
   };
 
@@ -487,13 +506,15 @@ export default function AdminDashboard() {
                   <th className="px-6 py-4 font-medium border-b border-gray-800">User</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Contact</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Role</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800">Approval Status</th>
                   <th className="px-6 py-4 font-medium border-b border-gray-800">Joined</th>
+                  <th className="px-6 py-4 font-medium border-b border-gray-800 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {registeredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
                       No registered users found.
                     </td>
                   </tr>
@@ -533,10 +554,41 @@ export default function AdminDashboard() {
                           </span>
                         )}
                       </td>
+                      <td className="px-6 py-4">
+                        {user.role === "admin" ? (
+                          <span className="text-xs text-gray-400 italic">N/A (Admin)</span>
+                        ) : (
+                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full border ${
+                            user.status === "approved" ? "bg-green-900/30 text-green-400 border-green-500/30" :
+                            user.status === "rejected" ? "bg-red-900/30 text-red-400 border-red-500/30" :
+                            "bg-yellow-900/30 text-yellow-400 border-yellow-500/30"
+                          }`}>
+                            {(user.status || "pending_approval").toUpperCase().replace("_", " ")}
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-400">
                         {typeof user.createdAt === "object" && user.createdAt && "seconds" in user.createdAt
                           ? new Date(user.createdAt.seconds * 1000).toLocaleDateString()
                           : "Unknown"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {user.role !== "admin" && (user.status !== "approved") && (
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => handleUpdateUserStatus(user.uid || user._id || "", "approved")}
+                              className="text-xs bg-green-900/40 hover:bg-green-800/80 text-green-300 border border-green-500/40 px-3 py-1.5 rounded-lg transition-colors font-bold shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => handleUpdateUserStatus(user.uid || user._id || "", "rejected")}
+                              className="text-xs bg-red-900/40 hover:bg-red-800/80 text-red-300 border border-red-500/40 px-3 py-1.5 rounded-lg transition-colors font-bold"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))

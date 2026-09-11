@@ -90,14 +90,38 @@ export default function StudentDashboard() {
       } else {
         setCurrentUser(user);
         try {
-          // Check if admin, redirect them out of here
+          // Check if admin or if account is approved
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
-            if (data.role?.toLowerCase() === "admin") {
-              router.push("/admin");
-              return;
+          const data = userDoc.exists() ? userDoc.data() : null;
+
+          if (data?.role?.toLowerCase() === "admin") {
+            router.push("/admin");
+            return;
+          }
+
+          let isApproved = data?.status === "approved";
+
+          // Double check with enrollment status
+          if (!isApproved && user.email) {
+            try {
+              const res = await fetch(`/api/enroll/user?email=${encodeURIComponent(user.email)}`);
+              const enrollData = await res.json();
+              if (enrollData.success && Array.isArray(enrollData.data)) {
+                isApproved = enrollData.data.some((item: { status?: string }) => item.status === "approved");
+              }
+            } catch (err) {
+              console.error("Error checking user approval:", err);
             }
+          }
+
+          if (!isApproved) {
+            // Force sign out and redirect unapproved user
+            await auth.signOut();
+            router.push("/login?error=pending_approval");
+            return;
+          }
+
+          if (data) {
             setUserData(data);
             setFirstName(data.firstName || "");
             setLastName(data.lastName || "");
@@ -111,6 +135,7 @@ export default function StudentDashboard() {
               setPhone(fullPhone);
             }
           }
+
           fetchMyEnrollments(user.email);
           fetchMyAttendance(user.email);
         } catch (error) {

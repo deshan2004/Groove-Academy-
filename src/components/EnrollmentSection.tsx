@@ -7,8 +7,8 @@ import {
   CreditCard, Building, Eye, EyeOff, Lock, Mail, Copy, Check, 
   ChevronRight, ChevronLeft, Sparkles, User, MapPin, X, FileText
 } from "lucide-react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
@@ -38,6 +38,7 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
     age: "",
     phone: "",
     email: "",
+    password: "",
     emergency_contact: "",
     location: "",
     preferred_style: "Kandyan Traditional",
@@ -87,7 +88,7 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
     setPaymentSlipName("");
   };
 
-  // Sign In Submission
+  // Sign In Submission (with pending admin approval check)
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginLoading(true);
@@ -96,17 +97,50 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
       const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-      const userRole = userDoc.exists() ? userDoc.data().role?.toLowerCase() : "user";
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      const userRole = userData?.role?.toLowerCase() || "user";
 
+      // Admin bypasses approval check
       if (userRole === "admin") {
         router.push("/admin");
-      } else {
-        router.push("/dashboard");
+        return;
       }
+
+      // Check approval status in user document
+      const isDocApproved = userData?.status === "approved";
+
+      // Also check enrollment status via API
+      let isEnrollmentApproved = false;
+      try {
+        const res = await fetch(`/api/enroll/user?email=${encodeURIComponent(loginEmail)}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
+          isEnrollmentApproved = data.data.some((item: { status?: string }) => item.status === "approved");
+        }
+      } catch (err) {
+        console.error("Error checking user approval:", err);
+      }
+
+      if (!isDocApproved && !isEnrollmentApproved) {
+        // Block sign in! Force sign out immediately and display notice.
+        await auth.signOut();
+        setStatus({
+          type: "error",
+          message: "🚫 Account Pending Approval: Admin eken approve krnakal log wenn baha. Your registration & bank slip are pending Admin verification. Please wait for approval.",
+        });
+        return;
+      }
+
+      // Account is approved!
+      router.push("/dashboard");
     } catch (err: unknown) {
       console.error(err);
       const errorObj = err as { code?: string; message?: string };
-      if (errorObj.code === "auth/invalid-credential" || errorObj.code === "auth/user-not-found" || errorObj.code === "auth/wrong-password") {
+      if (
+        errorObj.code === "auth/invalid-credential" ||
+        errorObj.code === "auth/user-not-found" ||
+        errorObj.code === "auth/wrong-password"
+      ) {
         setStatus({ type: "error", message: "Invalid email or password. Please verify your credentials." });
       } else {
         setStatus({ type: "error", message: errorObj.message || "Sign In failed. Please try again." });
@@ -118,8 +152,19 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
 
   // Step 1 Validation before moving to Step 2
   const validateStep1 = () => {
-    if (!formData.student_name.trim() || !formData.age || !formData.phone.trim() || !formData.email.trim() || !formData.location.trim()) {
-      setStatus({ type: "error", message: "Please fill in all required student details before proceeding." });
+    if (
+      !formData.student_name.trim() ||
+      !formData.age ||
+      !formData.phone.trim() ||
+      !formData.email.trim() ||
+      !formData.location.trim() ||
+      !formData.password
+    ) {
+      setStatus({ type: "error", message: "Please fill in all required student details and account password before proceeding." });
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setStatus({ type: "error", message: "Account password must be at least 6 characters long." });
       return false;
     }
     setStatus({ type: null, message: "" });
@@ -142,6 +187,29 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
     }
 
     try {
+      // 1. Create Firebase Auth User & Firestore user doc with status: "pending_approval"
+      try {
+        const userCred = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        await setDoc(doc(db, "users", userCred.user.uid), {
+          uid: userCred.user.uid,
+          email: formData.email,
+          firstName: formData.student_name.split(" ")[0] || formData.student_name,
+          lastName: formData.student_name.split(" ").slice(1).join(" ") || "",
+          phone: `${countryCode} ${formData.phone}`,
+          role: "user",
+          status: "pending_approval",
+          createdAt: new Date(),
+        });
+      } catch (authErr: unknown) {
+        const errorObj = authErr as { code?: string; message?: string };
+        if (errorObj.code === "auth/email-already-in-use") {
+          // Email already registered in Firebase Auth, proceed to save enrollment
+        } else {
+          throw authErr;
+        }
+      }
+
+      // 2. Submit enrollment record to Firestore
       const res = await fetch("/api/enroll", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -156,16 +224,21 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
       });
 
       const data = await res.json();
+
+      // 3. Immediately Sign Out so the user cannot log in until Admin approves!
+      await auth.signOut();
+
       if (res.ok && data.success) {
         setStatus({
           type: "success",
-          message: "Registration & Bank Slip submitted! Your application is pending Admin verification. Upon approval, your credentials will be dispatched via Email/SMS.",
+          message: "Account created & Bank Slip submitted! Account status: 'Pending Admin Approval'. Admin dashboard eken approve krnakal account ekt log wenn baha.",
         });
         setFormData({
           student_name: "",
           age: "",
           phone: "",
           email: "",
+          password: "",
           emergency_contact: "",
           location: "",
           preferred_style: "Kandyan Traditional",
@@ -183,11 +256,12 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
           message: data.error || "Failed to submit registration. Please check details and try again.",
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
+      const errObj = error as { message?: string };
       setStatus({
         type: "error",
-        message: "Network error occurred. Please try again later.",
+        message: errObj.message || "Network error occurred. Please try again later.",
       });
     } finally {
       setSignupLoading(false);
@@ -533,6 +607,32 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
                             className="w-full bg-[#080312] border border-purple-900/60 rounded-xl pl-10 pr-4 py-3.5 text-white text-sm focus:outline-none focus:border-purple-500/90 focus:ring-2 focus:ring-purple-500/30 transition-all placeholder:text-purple-400/40"
                             placeholder="student@example.com"
                           />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-purple-300/90 mb-2">
+                          Account Password *
+                        </label>
+                        <div className="relative">
+                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-fuchsia-400" />
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            required
+                            minLength={6}
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full bg-[#080312] border border-purple-900/60 rounded-xl pl-10 pr-10 py-3.5 text-white text-sm focus:outline-none focus:border-purple-500/90 focus:ring-2 focus:ring-purple-500/30 transition-all placeholder:text-purple-400/40"
+                            placeholder="•••••••• (Min 6 chars)"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-purple-400 hover:text-white transition-colors"
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
                         </div>
                       </div>
                     </div>

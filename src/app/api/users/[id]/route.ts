@@ -18,27 +18,27 @@ export async function PATCH(
       );
     }
 
-    const docRef = doc(db, "enrollments", id);
+    const docRef = doc(db, "users", id);
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       await updateDoc(docRef, { status: newStatus });
       const data = snap.data();
       if (data.email) {
-        // Also update matching user in users collection
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", data.email));
-        const userSnap = await getDocs(q);
-        for (const uDoc of userSnap.docs) {
-          await updateDoc(doc(db, "users", uDoc.id), { status: newStatus });
+        // Also update matching enrollments for this user's email
+        const enrollRef = collection(db, "enrollments");
+        const q = query(enrollRef, where("email", "==", data.email));
+        const enrollSnap = await getDocs(q);
+        for (const eDoc of enrollSnap.docs) {
+          await updateDoc(doc(db, "enrollments", eDoc.id), { status: newStatus });
         }
       }
     }
 
-    return NextResponse.json({ success: true, message: "Status updated successfully" }, { status: 200 });
+    return NextResponse.json({ success: true, message: "User status updated successfully" }, { status: 200 });
   } catch (error) {
-    console.error("Error updating enrollment status:", error);
+    console.error("Error updating user status:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to update status" },
+      { success: false, error: "Failed to update user status" },
       { status: 500 }
     );
   }
