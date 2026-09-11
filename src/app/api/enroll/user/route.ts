@@ -19,8 +19,13 @@ export async function GET(request: NextRequest) {
       ...doc.data()
     }));
 
+    interface EnrollmentRecord {
+      createdAt?: { toMillis: () => number };
+      [key: string]: unknown;
+    }
+
     // Optionally sort by createdAt manually if compound index is missing
-    enrollments.sort((a: any, b: any) => {
+    (enrollments as EnrollmentRecord[]).sort((a, b) => {
       if (!a.createdAt || !b.createdAt) return 0;
       return b.createdAt.toMillis() - a.createdAt.toMillis();
     });

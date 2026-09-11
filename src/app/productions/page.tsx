@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Clapperboard, Film, Music, Sparkles, Video, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Clapperboard, Film, Music, Video, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 

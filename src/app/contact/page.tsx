@@ -93,7 +93,7 @@ export default function ContactPage() {
             transition={{ delay: 0.2 }}
             className="text-purple-200/70 text-base sm:text-lg max-w-2xl mx-auto font-light"
           >
-            Have questions about our classes, rentals, or events? We'd love to hear from you.
+            Have questions about our classes, rentals, or events? We&apos;d love to hear from you.
           </motion.p>
         </div>
 

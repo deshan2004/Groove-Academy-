@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, getDocs, addDoc, query, orderBy, serverTimestamp } from "firebase/firestore";
 
 export async function GET() {
   try {
@@ -14,7 +14,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({ success: true, data: events }, { status: 200 });
-  } catch (error: any) {
+  } catch {
     // Fallback if index fails
     try {
       const eventsRef = collection(db, "events");

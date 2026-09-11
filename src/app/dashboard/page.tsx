@@ -3,18 +3,44 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import type { User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Calendar, User, Mail, MapPin, Clock, Settings, Phone, LogOut, CheckCircle } from "lucide-react";
+import { Calendar, User as UserIcon, Mail, Settings, Phone, LogOut, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
+interface Enrollment {
+  _id: string;
+  preferred_style?: string;
+  student_name?: string;
+  age?: number;
+  email?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+interface AttendanceRecord {
+  _id: string;
+  date: string;
+  presentEmails?: string[];
+  [key: string]: unknown;
+}
+
+interface UserData {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  role?: string;
+  [key: string]: unknown;
+}
+
 export default function StudentDashboard() {
-  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [userData, setUserData] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [activeTab, setActiveTab] = useState<"classes" | "profile" | "attendance">("classes");
-  const [attendanceRecords, setAttendanceRecords] = useState<any[]>([]);
+  const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
   
   // Profile form state
   const [firstName, setFirstName] = useState("");
@@ -25,6 +51,37 @@ export default function StudentDashboard() {
   const [updateMessage, setUpdateMessage] = useState({ type: "", text: "" });
 
   const router = useRouter();
+
+  const fetchMyAttendance = async (email: string | null) => {
+    if (!email) return;
+    try {
+      const res = await fetch(`/api/attendance?studentEmail=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.success) {
+        setAttendanceRecords(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching attendance:", error);
+    }
+  };
+
+  const fetchMyEnrollments = async (email: string | null) => {
+    if (!email) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/enroll/user?email=${encodeURIComponent(email)}`);
+      const data = await res.json();
+      if (data.success) {
+        setEnrollments(data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching my enrollments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -65,37 +122,6 @@ export default function StudentDashboard() {
     });
     return () => unsubscribe();
   }, [router]);
-
-  const fetchMyAttendance = async (email: string | null) => {
-    if (!email) return;
-    try {
-      const res = await fetch(`/api/attendance?studentEmail=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.success) {
-        setAttendanceRecords(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching attendance:", error);
-    }
-  };
-
-  const fetchMyEnrollments = async (email: string | null) => {
-    if (!email) {
-      setLoading(false);
-      return;
-    }
-    try {
-      const res = await fetch(`/api/enroll/user?email=${encodeURIComponent(email)}`);
-      const data = await res.json();
-      if (data.success) {
-        setEnrollments(data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching my enrollments:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -229,7 +255,7 @@ export default function StudentDashboard() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">No enrollments found</h3>
               <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                You haven't requested to join any classes yet. Browse our schedule and start your journey!
+                You haven&apos;t requested to join any classes yet. Browse our schedule and start your journey!
               </p>
               <Link
                 href="/classes"
@@ -261,7 +287,7 @@ export default function StudentDashboard() {
                   
                   <div className="space-y-3">
                     <div className="flex items-center text-sm text-gray-300">
-                      <User className="w-4 h-4 mr-3 text-gray-500" />
+                      <UserIcon className="w-4 h-4 mr-3 text-gray-500" />
                       {enrollment.student_name} ({enrollment.age} yrs)
                     </div>
                     <div className="flex items-center text-sm text-gray-300">
@@ -298,7 +324,7 @@ export default function StudentDashboard() {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">First Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                     <input
                       type="text"
                       value={firstName}
@@ -311,7 +337,7 @@ export default function StudentDashboard() {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">Last Name</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
                     <input
                       type="text"
                       value={lastName}
@@ -392,7 +418,7 @@ export default function StudentDashboard() {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">No attendance records found</h3>
                 <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                  You don't have any attendance records yet. Make sure you attend your enrolled classes!
+                  You don&apos;t have any attendance records yet. Make sure you attend your enrolled classes!
                 </p>
               </div>
             ) : (

@@ -7,27 +7,43 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+interface EventItem {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  imageUrl?: string;
+  [key: string]: unknown;
+}
+
 export default function EventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const res = await fetch("/api/events");
-      const data = await res.json();
-      if (data.success) {
-        setEvents(data.data);
+    let ignore = false;
+    async function loadEvents() {
+      try {
+        const res = await fetch("/api/events");
+        const data = await res.json();
+        if (!ignore && data.success) {
+          setEvents(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+    loadEvents();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-academy-black text-white">

@@ -2,10 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Save, Trash2, Plus, X } from "lucide-react";
+import { Trash2, Plus, X } from "lucide-react";
+
+interface EventItem {
+  _id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  description: string;
+  imageUrl?: string;
+  [key: string]: unknown;
+}
 
 export default function EventsTab() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -20,23 +31,27 @@ export default function EventsTab() {
   });
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/events");
-      const data = await res.json();
-      if (data.success) {
-        setEvents(data.data);
+    let ignore = false;
+    async function loadEvents() {
+      try {
+        const res = await fetch("/api/events");
+        const data = await res.json();
+        if (!ignore && data.success) {
+          setEvents(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+    loadEvents();
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

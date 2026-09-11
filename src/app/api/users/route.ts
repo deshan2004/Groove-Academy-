@@ -14,8 +14,9 @@ export async function GET() {
     }));
 
     return NextResponse.json({ success: true, data: users });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching users:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Failed to fetch users";
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }

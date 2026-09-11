@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const snapshot = await getDocs(q);
     const records = snapshot.docs.map(d => ({ _id: d.id, ...d.data() }));
     return NextResponse.json({ success: true, data: records }, { status: 200 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, error: "Failed to fetch attendance" }, { status: 500 });
   }
 }
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       });
       return NextResponse.json({ success: true, data: { _id: docRef.id, ...body } }, { status: 201 });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, error: "Failed to mark attendance" }, { status: 500 });
   }
 }

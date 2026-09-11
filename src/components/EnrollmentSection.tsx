@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, AlertCircle, UserPlus, LogIn, Send, Upload, CreditCard, Building, FileText, Eye, EyeOff, Lock, Mail, ArrowRight } from "lucide-react";
+import { CheckCircle, AlertCircle, UserPlus, LogIn, Send, Upload, CreditCard, Building, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
@@ -75,12 +75,13 @@ export default function EnrollmentSection({ initialMode = "signup" }: { initialM
       } else {
         router.push("/dashboard");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+      const errorObj = err as { code?: string; message?: string };
+      if (errorObj.code === "auth/invalid-credential" || errorObj.code === "auth/user-not-found" || errorObj.code === "auth/wrong-password") {
         setStatus({ type: "error", message: "Invalid email or password. Please try again." });
       } else {
-        setStatus({ type: "error", message: err.message || "Sign In failed. Please try again." });
+        setStatus({ type: "error", message: errorObj.message || "Sign In failed. Please try again." });
       }
     } finally {
       setLoginLoading(false);

@@ -9,18 +9,76 @@ import { Users, Mail, Phone, Calendar, UserCog, Shield, BookOpen, Plus, Edit, Tr
 import AttendanceTab from "@/components/admin/AttendanceTab";
 import EventsTab from "@/components/admin/EventsTab";
 
+interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds?: number;
+}
+
+interface EnrollmentItem {
+  _id: string;
+  student_name?: string;
+  studentName?: string;
+  age?: number | string;
+  phone?: string;
+  email?: string;
+  userEmail?: string;
+  location?: string;
+  preferred_style?: string;
+  preferred_branch?: string;
+  classTitle?: string;
+  status?: string;
+  payment_slip?: string;
+  transaction_ref?: string;
+  notes?: string;
+  createdAt?: FirestoreTimestamp | string | number | null;
+  [key: string]: unknown;
+}
+
+interface ClassItem {
+  _id: string;
+  title: string;
+  style: string;
+  day: string;
+  time: string;
+  instructor_name: string;
+  hall_no: string;
+  [key: string]: unknown;
+}
+
+interface UserItem {
+  _id?: string;
+  uid?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  phone?: string;
+  createdAt?: FirestoreTimestamp | string | number | null;
+}
+
+interface InquiryItem {
+  _id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  message?: string;
+  subject?: string;
+  createdAt?: FirestoreTimestamp | string | number | null;
+}
+
 export default function AdminDashboard() {
-  const [enrollments, setEnrollments] = useState<any[]>([]);
-  const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
-  const [classes, setClasses] = useState<any[]>([]);
-  const [inquiries, setInquiries] = useState<any[]>([]);
+  const [enrollments, setEnrollments] = useState<EnrollmentItem[]>([]);
+  const [registeredUsers, setRegisteredUsers] = useState<UserItem[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
+  const [inquiries, setInquiries] = useState<InquiryItem[]>([]);
   const [activeTab, setActiveTab] = useState<"enrollments" | "users" | "classes" | "inquiries" | "attendance" | "events">("enrollments");
   const [loading, setLoading] = useState(true);
-  const [selectedSlip, setSelectedSlip] = useState<any>(null);
+  const [selectedSlip, setSelectedSlip] = useState<EnrollmentItem | null>(null);
   
   // Class Form State
   const [showClassModal, setShowClassModal] = useState(false);
-  const [editingClass, setEditingClass] = useState<any>(null);
+  const [editingClass, setEditingClass] = useState<ClassItem | null>(null);
   const [classForm, setClassForm] = useState({
     title: "",
     style: "Kandyan",
@@ -30,27 +88,6 @@ export default function AdminDashboard() {
     hall_no: "",
   });
   const router = useRouter();
-
-  useEffect(() => {
-    // Check if user is logged in and is admin
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        router.push("/login");
-      } else {
-        try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
-            fetchEnrollments();
-          } else {
-            router.push("/");
-          }
-        } catch (error) {
-          router.push("/");
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [router]);
 
   const fetchEnrollments = async () => {
     try {
@@ -103,16 +140,38 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (activeTab === "users" && registeredUsers.length === 0) {
-      fetchUsers();
+    // Check if user is logged in and is admin
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        router.push("/login");
+      } else {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists() && userDoc.data().role?.toLowerCase() === "admin") {
+            fetchEnrollments();
+          } else {
+            router.push("/");
+          }
+        } catch {
+          router.push("/");
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
+  useEffect(() => {
+    async function loadTabData() {
+      if (activeTab === "users" && registeredUsers.length === 0) {
+        await fetchUsers();
+      } else if (activeTab === "classes" && classes.length === 0) {
+        await fetchClasses();
+      } else if (activeTab === "inquiries" && inquiries.length === 0) {
+        await fetchInquiries();
+      }
     }
-    if (activeTab === "classes" && classes.length === 0) {
-      fetchClasses();
-    }
-    if (activeTab === "inquiries" && inquiries.length === 0) {
-      fetchInquiries();
-    }
-  }, [activeTab]);
+    loadTabData();
+  }, [activeTab, registeredUsers.length, classes.length, inquiries.length]);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
@@ -164,7 +223,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const openClassModal = (cls: any = null) => {
+  const openClassModal = (cls: ClassItem | null = null) => {
     if (cls) {
       setEditingClass(cls);
       setClassForm({
@@ -342,7 +401,7 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full bg-purple-950 border border-purple-800 flex items-center justify-center text-fuchsia-400 font-bold">
-                            {student.student_name.charAt(0)}
+                            {(student.student_name || "S").charAt(0)}
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-white">{student.student_name}</div>
@@ -439,12 +498,12 @@ export default function AdminDashboard() {
                     </td>
                   </tr>
                 ) : (
-                  registeredUsers.map((user) => (
-                    <tr key={user.uid} className="hover:bg-black/20 transition-colors">
+                  registeredUsers.map((user, idx) => (
+                    <tr key={user.uid || user._id || idx} className="hover:bg-black/20 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full bg-academy-black flex items-center justify-center text-academy-gold font-bold">
-                            {(user.firstName || user.email)?.charAt(0).toUpperCase()}
+                            {(user.firstName || user.email || "U").charAt(0).toUpperCase()}
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-white">
@@ -475,7 +534,7 @@ export default function AdminDashboard() {
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-400">
-                        {user.createdAt?.seconds 
+                        {typeof user.createdAt === "object" && user.createdAt && "seconds" in user.createdAt
                           ? new Date(user.createdAt.seconds * 1000).toLocaleDateString()
                           : "Unknown"}
                       </td>
@@ -596,7 +655,7 @@ export default function AdminDashboard() {
                         {inq.message}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-400">
-                        {inq.createdAt?.seconds 
+                        {typeof inq.createdAt === "object" && inq.createdAt && "seconds" in inq.createdAt
                           ? new Date(inq.createdAt.seconds * 1000).toLocaleDateString()
                           : "Unknown"}
                       </td>

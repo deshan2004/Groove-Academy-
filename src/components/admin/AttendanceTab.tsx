@@ -2,9 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Save, Check } from "lucide-react";
+import { Save, Check } from "lucide-react";
 
-export default function AttendanceTab({ classes, enrollments }: { classes: any[], enrollments: any[] }) {
+interface ClassProps {
+  _id: string;
+  title: string;
+  day?: string;
+  [key: string]: unknown;
+}
+
+interface EnrollmentProps {
+  _id: string;
+  classTitle?: string;
+  preferred_style?: string;
+  status?: string;
+  student_name?: string;
+  email?: string;
+  [key: string]: unknown;
+}
+
+export default function AttendanceTab({ classes, enrollments }: { classes: ClassProps[], enrollments: EnrollmentProps[] }) {
   const [selectedClassId, setSelectedClassId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [presentEmails, setPresentEmails] = useState<string[]>([]);
@@ -13,29 +30,35 @@ export default function AttendanceTab({ classes, enrollments }: { classes: any[]
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (selectedClassId && date) {
-      fetchAttendance();
-    }
-  }, [selectedClassId, date]);
-
-  const fetchAttendance = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/attendance?classId=${selectedClassId}&date=${date}`);
-      const data = await res.json();
-      if (data.success && data.data.length > 0) {
-        setPresentEmails(data.data[0].presentEmails || []);
-        setRecordId(data.data[0]._id);
-      } else {
-        setPresentEmails([]);
-        setRecordId(null);
+    if (!selectedClassId || !date) return;
+    let ignore = false;
+    async function loadAttendance() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/attendance?classId=${selectedClassId}&date=${date}`);
+        const data = await res.json();
+        if (!ignore) {
+          if (data.success && data.data.length > 0) {
+            setPresentEmails(data.data[0].presentEmails || []);
+            setRecordId(data.data[0]._id);
+          } else {
+            setPresentEmails([]);
+            setRecordId(null);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch attendance", error);
+      } finally {
+        if (!ignore) {
+          setLoading(false);
+        }
       }
-    } catch (error) {
-      console.error("Failed to fetch attendance", error);
-    } finally {
-      setLoading(false);
     }
-  };
+    loadAttendance();
+    return () => {
+      ignore = true;
+    };
+  }, [selectedClassId, date]);
 
   const toggleStudent = (email: string) => {
     if (presentEmails.includes(email)) {
@@ -136,11 +159,12 @@ export default function AttendanceTab({ classes, enrollments }: { classes: any[]
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {classStudents.map(student => {
-                const isPresent = presentEmails.includes(student.email);
+                const email = student.email || "";
+                const isPresent = presentEmails.includes(email);
                 return (
                   <div 
                     key={student._id}
-                    onClick={() => toggleStudent(student.email)}
+                    onClick={() => toggleStudent(email)}
                     className={`cursor-pointer border rounded-xl p-4 flex items-center justify-between transition-all ${
                       isPresent 
                         ? 'border-academy-gold bg-academy-gold/10' 

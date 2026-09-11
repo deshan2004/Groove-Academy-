@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Users2, Trophy, Flame, Star, Sparkles, Video } from "lucide-react";
+import { ArrowLeft, Users2, Trophy, Flame, Video } from "lucide-react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 
@@ -69,7 +69,7 @@ export default function CrewPage() {
           transition={{ delay: 0.1 }}
           className="text-purple-200/70 max-w-3xl mx-auto text-base sm:text-lg font-light leading-relaxed mb-12"
         >
-          Sri Lanka's elite dance ensemble blending Kandyan traditional mastery with modern Hip-Hop, Latin, and Contemporary stage showmanship. Available for concerts, brand launches, and international tours.
+          Sri Lanka&apos;s elite dance ensemble blending Kandyan traditional mastery with modern Hip-Hop, Latin, and Contemporary stage showmanship. Available for concerts, brand launches, and international tours.
         </motion.p>
 
         {/* Achievements Grid */}

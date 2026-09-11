@@ -15,7 +15,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({ success: true, data: classes }, { status: 200 });
-  } catch (error: any) {
+  } catch {
     // If index doesn't exist, it might fail. Fallback to basic getDocs
     try {
       const classesRef = collection(db, "classes");

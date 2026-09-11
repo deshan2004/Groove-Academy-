@@ -2,18 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, User } from "lucide-react";
+import { Menu, X, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { auth, db } from "@/lib/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
 const Navbar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -33,7 +33,7 @@ const Navbar = () => {
           } else {
             setIsAdmin(false);
           }
-        } catch (e) {
+        } catch {
           setIsAdmin(false);
         }
       } else {
@@ -46,9 +46,6 @@ const Navbar = () => {
       unsubscribe();
     };
   }, []);
-
-  // Hide top header navbar completely across all pages
-  return null;
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -88,7 +85,9 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-purple-200/80 hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all font-medium text-xs tracking-widest uppercase"
+                className={`hover:text-fuchsia-300 hover:drop-shadow-[0_0_10px_rgba(232,121,249,0.8)] transition-all font-medium text-xs tracking-widest uppercase ${
+                  pathname === link.href ? "text-fuchsia-400 font-bold" : "text-purple-200/80"
+                }`}
               >
                 {link.name}
               </Link>
@@ -104,7 +103,7 @@ const Navbar = () => {
                   href={isAdmin ? "/admin" : "/dashboard"}
                   className="flex items-center gap-2 text-purple-300 border border-purple-500/50 hover:bg-purple-600 hover:text-white px-6 py-2 rounded-full font-semibold text-xs tracking-wider uppercase transition-all shadow-[0_0_15px_rgba(168,85,247,0.25)] hover:shadow-[0_0_25px_rgba(168,85,247,0.5)]"
                 >
-                  <User className="w-4 h-4 text-fuchsia-400" />
+                  <UserIcon className="w-4 h-4 text-fuchsia-400" />
                   {isAdmin ? "Admin" : "Account"}
                 </Link>
                 {showDropdown && (
@@ -178,7 +177,7 @@ const Navbar = () => {
                     onClick={() => setIsOpen(false)}
                     className="w-full flex justify-center items-center gap-2 border border-purple-500/50 text-purple-200 hover:bg-purple-600 hover:text-white px-6 py-3 rounded-full font-medium transition-all text-sm uppercase tracking-wider"
                   >
-                    <User className="w-4 h-4 text-fuchsia-400" />
+                    <UserIcon className="w-4 h-4 text-fuchsia-400" />
                     {isAdmin ? "Admin Dashboard" : "My Dashboard"}
                   </Link>
                   
