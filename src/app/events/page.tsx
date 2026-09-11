@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Calendar, MapPin, Clock, Star, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 interface EventItem {
   _id: string;
@@ -155,8 +154,6 @@ export default function EventsPage() {
           </div>
         )}
       </section>
-
-      <Footer />
     </main>
   );
 }

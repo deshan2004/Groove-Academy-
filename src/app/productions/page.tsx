@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowLeft, Clapperboard, Film, Music, Video, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import Footer from "@/components/Footer";
 
 const services = [
   {
@@ -106,8 +105,6 @@ export default function ProductionsPage() {
           </Link>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 }
